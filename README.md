@@ -108,7 +108,7 @@ Lo schema del database è in [`supabase/migrations/`](supabase/migrations/). Le 
 - **PDF generato nel browser**: nessun carico sul Worker e nessuna dipendenza WebAssembly lato server.
 - **ThreatFox** a volte tronca le risposte lunghe lato server. L'ingestion tiene i record completi ricevuti e registra la raccolta come *parziale*, visibile nella pagina Fonti.
 - **ransomware.live** non ha una categoria per le telecomunicazioni: per quel settore la dashboard mostra "n.d." invece di attribuire dati a caso.
-- **Piano gratuito Cloudflare: 10 ms di CPU per richiesta.** Le pagine più pesanti (matrice ATT&CK) vanno monitorate nei log del Worker.
+- **Piano gratuito Cloudflare: 10 ms di CPU per richiesta.** Le pagine pubbliche sono servite da **Workers Cache** (30 minuti, poi aggiornamento in background), quindi una visita in cache non esegue il Worker e non consuma CPU. Il badge dell'account è calcolato nel browser, così le pagine in cache sono identiche per tutti; le pagine dell'analista non vengono mai messe in cache. Un report appena pubblicato compare su /briefs entro circa 30 minuti.
 - **`npm audit` segnala 3 vulnerabilità moderate** in `glob`/`minimatch`, dipendenze della CLI di build di OpenNext che non finiscono nel Worker. La correzione proposta (downgrade a OpenNext 0.3) romperebbe il progetto.
 
 ---

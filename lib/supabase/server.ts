@@ -23,7 +23,7 @@ export async function sessionDb() {
           try {
             for (const { name, value, options } of list) store.set(name, value, options);
           } catch {
-            // In un Server Component i cookie sono in sola lettura: li aggiorna SessionKeeper nel browser.
+            // In un Server Component i cookie sono in sola lettura: li aggiorna AccountBadge nel browser.
           }
         },
       },

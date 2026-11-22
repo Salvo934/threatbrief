@@ -9,7 +9,11 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Workers Cache: le risposte con Cloudflare-CDN-Cache-Control (solo pagine pubbliche, vedi
+  // next.config.ts) vengono servite dalla cache senza eseguire il Worker (zero CPU).
+  // Le pagine dell'analista hanno "private, no-store" e passano sempre dal Worker.
+  "cache": { "enabled": true }
   // Nessuna chiave qui. NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
   // vengono incorporate al momento della build da .env.local (sono pubbliche per natura:
   // la protezione dei dati è la RLS). La chiave segreta non serve al Worker: la usano solo

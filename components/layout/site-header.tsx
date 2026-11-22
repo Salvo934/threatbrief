@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { logout } from "@/app/login/actions";
+import { AccountBadge } from "@/components/layout/account-badge";
 import { NavLinks, NavList } from "@/components/layout/nav-links";
-import { SessionKeeper } from "@/components/layout/session-keeper";
-import { getViewer } from "@/lib/supabase/server";
 
 /**
  * Navigazione principale: barra laterale fissa da schermo largo (lg) in su,
  * barra in alto con le voci in riga scorrevole su schermi stretti.
+ * Non legge la sessione sul server: lo stato dell'account arriva dal browser.
  */
 export function SiteHeader() {
   return (
@@ -18,9 +17,7 @@ export function SiteHeader() {
           ThreatBrief
         </Link>
         <div className="flex items-center gap-2 text-xs lg:hidden">
-          <Suspense fallback={<span className="text-muted">…</span>}>
-            <ViewerBadge />
-          </Suspense>
+          <AccountBadge />
         </div>
       </div>
       <nav aria-label="Principale" className="px-2 py-2 lg:mt-4 lg:flex-1 lg:px-3">
@@ -29,36 +26,8 @@ export function SiteHeader() {
         </Suspense>
       </nav>
       <div className="hidden flex-col items-start gap-2 border-t border-line px-5 py-4 text-xs lg:flex">
-        <Suspense fallback={<span className="text-muted">…</span>}>
-          <ViewerBadge keepSession />
-        </Suspense>
+        <AccountBadge keepSession />
       </div>
     </aside>
-  );
-}
-
-/** keepSession: monta il rinnovo della sessione una sola volta (il badge compare due volte nel layout). */
-async function ViewerBadge({ keepSession = false }: { keepSession?: boolean }) {
-  const viewer = await getViewer();
-  if (!viewer) {
-    return (
-      <>
-        <span className="rounded-full border border-line px-2.5 py-0.5 text-muted">Demo pubblica · sola lettura</span>
-        <Link href="/login" className="rounded-md py-1 text-muted hover:text-fg">Accedi</Link>
-      </>
-    );
-  }
-  return (
-    <>
-      {keepSession && <SessionKeeper />}
-      <span className="text-muted">
-        {viewer.name ?? viewer.email}
-        {!viewer.isAnalyst && " · senza permessi di scrittura"}
-      </span>
-      {viewer.isAnalyst && <Link href="/report" className="rounded-md py-1 text-accent hover:underline">I miei report</Link>}
-      <form action={logout}>
-        <button className="rounded-md py-1 text-muted hover:text-fg">Esci</button>
-      </form>
-    </>
   );
 }
