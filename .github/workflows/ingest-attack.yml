@@ -1,0 +1,31 @@
+# MITRE ATT&CK Enterprise: ~55 MB di STIX, troppo per un Cloudflare Worker (128 MB di RAM).
+# Esce ~2 volte l'anno: basta un controllo settimanale + avvio manuale.
+name: Ingest ATT&CK
+
+on:
+  schedule:
+    - cron: "17 4 * * 1" # lunedì 04:17 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: ingest-attack
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run ingest -- attack
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}

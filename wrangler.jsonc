@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "threatbrief",
+  "main": ".open-next/worker.js",
+  "upload_source_maps": true,
+  "compatibility_date": "2026-11-22",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+  // Nessuna chiave qui. NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  // vengono incorporate al momento della build da .env.local (sono pubbliche per natura:
+  // la protezione dei dati è la RLS). La chiave segreta non serve al Worker: la usano solo
+  // gli script di ingestion su GitHub Actions.
+}

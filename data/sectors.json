@@ -1,0 +1,108 @@
+{
+  "$comment": "Regole di matching per settore. 'attack_patterns' sono regex (case-insensitive) applicate alle descrizioni MITRE ATT&CK (in inglese) per DERIVARE i settori colpiti da un attore. Il risultato è marcato method='derivato', confidenza bassa, con la frase di evidenza. Le esclusioni (lookahead/lookbehind) evitano falsi positivi noti: 'financially motivated' non è il settore finanza; 'Chinese government' è attribuzione, non vittima.",
+  "version": "2026-11-22",
+  "sectors": [
+    {
+      "id": "sanita",
+      "name": "Sanità",
+      "attack_patterns": [
+        "\\bhealth ?care",
+        "\\bhospital",
+        "\\bmedical",
+        "\\bpharmaceutical",
+        "\\bhealth sector"
+      ],
+      "ransomware_live_activities": [
+        "Healthcare"
+      ]
+    },
+    {
+      "id": "manifatturiero",
+      "name": "Manifatturiero",
+      "attack_patterns": [
+        "\\bmanufactur",
+        "\\bautomotive",
+        "\\bsemiconductor",
+        "\\bindustrial (?:sector|companies|organizations|firms)"
+      ],
+      "ransomware_live_activities": [
+        "Manufacturing"
+      ]
+    },
+    {
+      "id": "finanza",
+      "name": "Finanza",
+      "attack_patterns": [
+        "\\bfinancial(?!ly| gain)",
+        "\\bbank(?:s|ing)?\\b",
+        "\\binsurance",
+        "\\bcryptocurrency exchange",
+        "\\bfintech",
+        "\\bSWIFT\\b"
+      ],
+      "ransomware_live_activities": [
+        "Financial Services"
+      ]
+    },
+    {
+      "id": "energia",
+      "name": "Energia",
+      "attack_patterns": [
+        "\\benergy",
+        "\\boil and gas",
+        "\\belectric(?:ity|al)? (?:compan|grid|utilit|power|sector|distribution)",
+        "\\belectricity",
+        "\\butilit(?:y|ies) (?:sector|companies)",
+        "\\bnuclear (?:power|energy|plant|facilit)",
+        "\\bpetro"
+      ],
+      "ransomware_live_activities": [
+        "Energy & Utilities"
+      ]
+    },
+    {
+      "id": "pa",
+      "name": "Pubblica Amministrazione",
+      "attack_patterns": [
+        "(?<!(?:Chinese|Russian|Iranian|North Korean|Korean|Vietnamese|Pakistani|Indian|Turkish|Belarusian|Lebanese|Syrian|Israeli|U\\.S\\.|US|Palestinian|Hamas) )\\bgovernment(?![- ](?:sponsored|backed|linked|affiliated))",
+        "\\bministr(?:y|ies)",
+        "\\bpublic sector",
+        "\\bdiplomat",
+        "\\bembass(?:y|ies)",
+        "\\bmunicipal"
+      ],
+      "ransomware_live_activities": [
+        "Government & Defense"
+      ]
+    },
+    {
+      "id": "trasporti",
+      "name": "Trasporti",
+      "attack_patterns": [
+        "\\btransportation",
+        "\\baviation",
+        "\\bairline",
+        "\\bairport",
+        "\\bmaritime",
+        "\\bshipping",
+        "\\blogistics",
+        "\\brailway"
+      ],
+      "ransomware_live_activities": [
+        "Transportation"
+      ]
+    },
+    {
+      "id": "telco",
+      "name": "Telecomunicazioni",
+      "attack_patterns": [
+        "\\btelecom",
+        "\\binternet service provider",
+        "\\bISPs?\\b",
+        "\\bsatellite"
+      ],
+      "ransomware_live_activities": []
+    }
+  ],
+  "$comment_ransomware": "'ransomware_live_activities': etichette 'activity' di ransomware.live attribuite al settore. ransomware.live non ha una categoria per le telecomunicazioni (finiscono in 'Technology'), quindi telco resta senza vittime associate."
+}

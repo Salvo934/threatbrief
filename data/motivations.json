@@ -1,0 +1,10 @@
+{
+  "$comment": "Regole per DERIVARE la motivazione di un attore dalla descrizione MITRE ATT&CK. Output marcato method='derivato', confidenza bassa, con evidenza.",
+  "version": "2026-11-22",
+  "motivations": [
+    { "id": "spionaggio", "label": "Spionaggio", "patterns": ["\\bespionage", "\\bintelligence (?:collection|gathering)"] },
+    { "id": "finanziaria", "label": "Guadagno economico", "patterns": ["\\bfinancially motivated", "\\bfinancial gain", "\\bcyber ?crim", "\\bransomware"] },
+    { "id": "hacktivismo", "label": "Hacktivismo", "patterns": ["\\bhacktivis"] },
+    { "id": "distruttiva", "label": "Sabotaggio / distruzione", "patterns": ["\\bdestructive", "\\bsabotage", "\\bwiper"] }
+  ]
+}
