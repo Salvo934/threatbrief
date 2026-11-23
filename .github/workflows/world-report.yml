@@ -1,0 +1,31 @@
+# Rapporto della notte: ultime 24 ore nel mondo (rivendicazioni, malware, KEV) con tecniche e difese.
+# Automatico e pubblico (/minacce/notte), dichiarato come non rivisto da un analista.
+name: Rapporto della notte
+
+on:
+  schedule:
+    - cron: "30 5 * * *" # 05:30 UTC = 06:30 (ora solare) / 07:30 (ora legale) a Roma
+  workflow_dispatch:
+
+concurrency:
+  group: world-report
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  world:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run ingest -- world
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}

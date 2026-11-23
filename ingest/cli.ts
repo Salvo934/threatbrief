@@ -10,6 +10,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateDigest } from "../lib/digest/build";
+import { generateWorldReport } from "../lib/world/build";
 import { createAdminClient } from "./lib/db";
 import { fetchJson } from "./lib/http";
 import { runSource, type SourceResult } from "./lib/run";
@@ -109,7 +110,19 @@ async function digest(db: SupabaseClient) {
   }
 }
 
-const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = { purge, digest };
+/** Rapporto della notte: ultime 24 ore nel mondo, generato automaticamente e pubblico. */
+async function world(db: SupabaseClient) {
+  try {
+    const r = await generateWorldReport(db);
+    console.log(`✔ rapporto della notte ${r.report_date}: ${r.claims} rivendicazioni, ${r.actors} attori collegati ad ATT&CK, ${r.techniques} tecniche`);
+    return true;
+  } catch (err) {
+    console.error(`✘ rapporto della notte: ${err instanceof Error ? err.message : err}`);
+    return false;
+  }
+}
+
+const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = { purge, digest, world };
 
 async function main() {
   const args = process.argv.slice(2);

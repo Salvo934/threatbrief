@@ -13,12 +13,12 @@
 | Sezione | Cosa fa | Requisito |
 |---|---|---|
 | **Briefing** (home) | I punti più importanti del periodo per un'organizzazione italiana: cosa è successo, perché conta, cosa fare. Nasce da una bozza automatica giornaliera (KEV, CSIRT Italia, rivendicazioni, IOC) rivista dall'analista e pubblicata come TLP:CLEAR, massimo 5 punti. | Riassunti giornalieri e settimanali; comunicazione a tutti i livelli |
-| **Minacce** | Classifica dei gruppi ransomware più attivi contro organizzazioni italiane e schede in italiano (come entrano, strumenti, tecniche ATT&CK per fase, contromisure specifiche e prioritarie, **contromisure MITRE D3FEND**), solo da fonti primarie. Profili di tutti gli attori ATT&CK e confronto tra due attori. | MITRE ATT&CK e D3FEND; analisi delle TTP |
+| **Minacce** | Classifica dei gruppi ransomware più attivi contro organizzazioni italiane e schede in italiano (come entrano, strumenti, tecniche ATT&CK per fase, contromisure specifiche e prioritarie, **contromisure MITRE D3FEND**), solo da fonti primarie. Profili di tutti gli attori ATT&CK e confronto tra due attori. **La notte nel mondo**: rapporto automatico ogni mattina sulle ultime 24 ore (rivendicazioni, malware, nuove KEV), con le tecniche ricorrenti degli attori attivi e le difese ATT&CK/D3FEND che ne coprono di più. | MITRE ATT&CK e D3FEND; analisi delle TTP |
 | **Settori** | Per ogni settore: attori, tecniche più usate, mitigazioni prioritarie collegate alle misure NIS2 (art. 24 D.Lgs. 138/2024), rivendicazioni. | Tradurre la minaccia in rischio e azioni |
 | **Analizza** | Triage di un testo o di una lista di IOC (anche defanged): nuovo, già visto o collegato a malware e attori; CVE nel catalogo KEV; tecniche citate. | Triage degli IOC; correlazione di più fonti |
 | **Report** | Brief esecutivo di una pagina e scheda tecnica; export PDF e **STIX 2.1**; i report pubblicati sono anche su un **server TAXII 2.1** (`/taxii2/`) consumabile da OpenCTI o MISP. | Report utilizzabili; STIX/TAXII |
 
-Dietro le quinte: raccolta automatica su GitHub Actions (feed ogni 6 ore, ATT&CK e D3FEND ogni settimana, digest ogni mattina), pagina [Fonti](https://threatbrief.salvo-bonavita9808.workers.dev/fonti) con lo stato di ogni fonte.
+Dietro le quinte: raccolta automatica su GitHub Actions (feed ogni 6 ore, ATT&CK e D3FEND ogni settimana, rapporto della notte e digest ogni mattina), pagina [Fonti](https://threatbrief.salvo-bonavita9808.workers.dev/fonti) con lo stato di ogni fonte.
 
 **Area personale** (solo per l'analista, dopo l'accesso): digest giornaliero da rivedere, editor dei report, **Accademia** (12 lezioni sul mestiere CTI con domande da colloquio e allenamento a schede) e **Sul campo** (giornata tipo e 8 casi pratici).
 
