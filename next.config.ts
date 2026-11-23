@@ -21,6 +21,8 @@ const PUBLIC_PATHS = [
   "/briefs/rss.xml",
   "/briefs/:slug",
   "/briefs/:slug/stix",
+  "/accademia",
+  "/accademia/:slug",
 ];
 // 30 minuti fresca; poi, per un giorno, la copia in cache viene servita subito mentre il Worker
 // la rigenera in background. I feed si aggiornano ogni 6 ore e il sito ha poco traffico:

@@ -18,6 +18,8 @@
 | **Produzione** | Editor dei report per l'analista: brief esecutivo di una pagina e scheda tecnica. |
 | **Diffusione** | Pagina pubblica **/briefs** con feed RSS ed export PDF e STIX 2.1. |
 
+**Accademia** (`/accademia`): un percorso in 12 lezioni sul mestiere dell'analista CTI. Ogni lezione ha teoria essenziale, esercizi sui dati reali dell'app, errori da evitare e domande da colloquio con risposta modello. Ci sono anche un glossario e un allenamento a schede; i progressi restano salvati nel browser.
+
 ## Rigore analitico (la parte che conta)
 
 - **TLP 2.0** su ogni report, con le etichette ufficiali FIRST. Il DB impedisce di pubblicare qualsiasi cosa diversa da TLP:CLEAR, e nello STIX i marking usano gli identificativi OASIS ufficiali.

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Building2, Database, FileText, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
+  Building2, Database, FileText, GraduationCap, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,6 +22,7 @@ export const NAV: { title: string; items: Item[] }[] = [
   },
   { title: "Strumenti", items: [{ href: "/analisi", label: "Analisi IOC", icon: ScanSearch }] },
   { title: "Pubblicazioni", items: [{ href: "/briefs", label: "Briefs", icon: FileText }] },
+  { title: "Formazione", items: [{ href: "/accademia", label: "Accademia", icon: GraduationCap }] },
   { title: "Sistema", items: [{ href: "/fonti", label: "Fonti", icon: Database }] },
 ];
 
