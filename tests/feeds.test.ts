@@ -83,3 +83,23 @@ describe("salvageJsonArray", () => {
     expect(salvageJsonArray(text, "missing")).toBeNull();
   });
 });
+
+describe("parseD3fend", async () => {
+  const { parseD3fend } = await import("../ingest/sources/d3fend");
+  it("estrae contromisure uniche e scarta righe incomplete o tattiche sconosciute", () => {
+    const b = (id: string, label: string, tactic: string, iri: string) => ({
+      def_tech_id: { value: id }, def_tech_label: { value: label }, def_tactic_label: { value: tactic },
+      def_tech: { value: `http://d3fend.mitre.org/ontologies/d3fend.owl#${iri}` },
+    });
+    const rows = parseD3fend("T1003.001", {
+      off_to_def: { results: { bindings: [
+        b("D3-PLA", "Process Lineage Analysis", "Detect", "ProcessLineageAnalysis"),
+        b("D3-PLA", "Process Lineage Analysis", "Detect", "ProcessLineageAnalysis"),
+        b("D3-XX", "Strano", "Boh", "Strano"),
+        {},
+      ] } },
+    });
+    expect(rows).toEqual([{ attack_external_id: "T1003.001", d3fend_id: "D3-PLA", label: "Process Lineage Analysis", tactic: "Detect", iri_name: "ProcessLineageAnalysis" }]);
+    expect(parseD3fend("T1", null)).toEqual([]);
+  });
+});

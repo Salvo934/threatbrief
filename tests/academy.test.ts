@@ -68,3 +68,13 @@ describe("Accademia", () => {
     }
   });
 });
+
+describe("pagina Cosa dimostra", () => {
+  it("ogni link interno punta a una pagina esistente", async () => {
+    const { readFileSync } = await import("node:fs");
+    const src = readFileSync("app/competenze/page.tsx", "utf8");
+    const hrefs = [...src.matchAll(/href: "([^"]+)"/g)].map((m) => m[1]).filter((h) => h.startsWith("/"));
+    expect(hrefs.length).toBeGreaterThan(10);
+    for (const h of hrefs) expect(matches(h.split("?")[0].replace(/\/$/, "") || "/"), h).toBe(true);
+  });
+});

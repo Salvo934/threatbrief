@@ -30,8 +30,7 @@ async function Content() {
       <EmptyState>
         Il digest è un&apos;area di lavoro riservata all&apos;analista.{" "}
         {!viewer && <><Link href="/login?next=/digest" className="underline">Accedi</Link> · </>}
-        Per vedere com&apos;è fatto il lavoro di triage, leggi il caso{" "}
-        <Link href="/accademia/sul-campo/triage-mattutino" className="underline">«Il triage del mattino e il digest»</Link>.
+        Il risultato pubblico del triage quotidiano è il <Link href="/briefing" className="underline">Briefing</Link>.
       </EmptyState>
     );
   }

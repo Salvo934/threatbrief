@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AttackMatrix, MatrixLegend } from "@/components/attack/attack-matrix";
 import { ViewToggle } from "@/components/attack/view-toggle";
+import { D3fendPanel } from "@/components/d3fend/d3fend-panel";
 import { RankedMitigations } from "@/components/mitigations/ranked-mitigations";
 import { Badge, Card, PageHeader, Skeleton } from "@/components/ui/primitives";
 import { buildMatrix } from "@/lib/attack/matrix";
@@ -186,6 +187,7 @@ async function Actor({ params, searchParams }: Pick<Props, "params" | "searchPar
           Le lettere NIS2 sono una <Link href="/mitigazioni" className="underline">mappatura del progetto</Link> sull&apos;art. 24, c. 2 D.Lgs. 138/2024.
         </p>
       </Card>
+      <D3fendPanel techniques={techniques.filter((t) => usage.has(t.id)).map((t) => t.external_id)} />
     </div>
   );
 }

@@ -5,12 +5,14 @@ import { Badge, Card, PageHeader, Skeleton } from "@/components/ui/primitives";
 import { getMitigatesLinks, getMitigations } from "@/lib/data/mitigations";
 import { formatDate } from "@/lib/format";
 import { NIS2, measureRef, mitigationsForMeasure } from "@/lib/nis2/mapping";
+import { SubNav, SETTORI_TABS } from "@/components/ui/sub-nav";
 
 export const metadata: Metadata = { title: "Mitigazioni e NIS2" };
 
 export default function MitigazioniPage() {
   return (
     <>
+      <SubNav items={SETTORI_TABS} current="/mitigazioni" />
       <PageHeader title="Mitigazioni e misure NIS2">
         Le mitigazioni MITRE ATT&CK collegate alle misure minime dell&apos;
         <a href={NIS2.source.url} target="_blank" rel="noreferrer" className="underline">

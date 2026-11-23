@@ -17,7 +17,7 @@ permissions:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -25,7 +25,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run ingest -- attack
+      # ATT&CK e poi le contromisure D3FEND per ogni tecnica (~700 richieste, qualche minuto)
+      - run: npm run ingest -- attack d3fend
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}

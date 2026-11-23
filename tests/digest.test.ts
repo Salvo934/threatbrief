@@ -79,3 +79,25 @@ describe("testo finale del digest", async () => {
     expect(text).toContain("(1 elemento escluso dopo la revisione.)");
   });
 });
+
+describe("briefing pubblico", async () => {
+  const { briefingItems } = await import("@/lib/digest/briefing");
+  const it_ = (key: string, url: string) => ({ key, section: "kev" as const, title: key, facts: "f", source: { name: "S", url }, suggested: "info" as const, reason: "" });
+  it("massimo 5 punti, rivisti e non esclusi, in ordine di priorità, senza link interni", () => {
+    const items = ["a", "b", "c", "d", "e", "f", "g"].map((k) => it_(k, k === "a" ? "/fonti" : "https://x.test"));
+    const reviews = [
+      { item_key: "a", priority: "info" as const, relevance: null, action: null },
+      { item_key: "b", priority: "azione" as const, relevance: "r", action: "x" },
+      { item_key: "c", priority: "escludi" as const, relevance: null, action: null },
+      { item_key: "d", priority: "monitorare" as const, relevance: null, action: null },
+      { item_key: "e", priority: "info" as const, relevance: null, action: null },
+      { item_key: "f", priority: "info" as const, relevance: null, action: null },
+      { item_key: "g", priority: "info" as const, relevance: null, action: null },
+    ];
+    const out = briefingItems(items, reviews);
+    expect(out).toHaveLength(5);
+    expect(out.map((i) => i.title).slice(0, 2)).toEqual(["b", "d"]);
+    expect(out.find((i) => i.title === "c")).toBeUndefined();
+    expect(out.find((i) => i.title === "a")?.source.url).toBeNull();
+  });
+});

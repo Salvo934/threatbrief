@@ -2,23 +2,25 @@
 
 **Piattaforma di Cyber Threat Intelligence per i settori italiani: dalle fonti aperte al brief per il management, con un flusso verificabile.**
 
-> *EN — ThreatBrief is a CTI portfolio project. It collects open-source threat data (MITRE ATT&CK, CISA KEV, abuse.ch, CSIRT Italia, ransomware.live), maps threat actors, techniques and mitigations to Italian sectors and to the NIS2 security measures (Italian Legislative Decree 138/2024, art. 24), and produces intelligence reports with TLP 2.0, Admiralty grading, facts kept separate from analytic judgements, and PDF / STIX 2.1 export.*
+> *EN — ThreatBrief is a CTI portfolio project focused on Italian organisations. It collects open-source threat data (MITRE ATT&CK, MITRE D3FEND, CISA KEV, abuse.ch, CSIRT Italia, ransomware.live), profiles the most active threat actors with ATT&CK techniques and D3FEND countermeasures, links mitigations to the NIS2 measures (Italian Legislative Decree 138/2024, art. 24), and publishes intelligence with TLP 2.0, Admiralty grading, facts separated from judgements, PDF, STIX 2.1 and a read-only TAXII 2.1 server.*
 
-**Demo pubblica:** _URL dopo il deploy_ — consultabile senza account; il login serve solo all'analista per creare report.
+**Demo pubblica:** https://threatbrief.salvo-bonavita9808.workers.dev — senza account. Per chi valuta: parti da [**Cosa dimostra**](https://threatbrief.salvo-bonavita9808.workers.dev/competenze), che collega ogni requisito degli annunci CTI alla pagina che lo dimostra.
 
 ---
 
-## Cosa fa, seguendo il ciclo dell'intelligence
+## Cinque sezioni, ognuna risponde a un requisito degli annunci CTI
 
-| Fase | Nell'app |
-|---|---|
-| **Raccolta** | 7 fonti aperte e gratuite, aggiornate da GitHub Actions. La pagina **Fonti** mostra per ognuna l'ultima lettura, i record e l'ultimo errore. Se una fonte non risponde, le altre continuano. |
-| **Elaborazione** | IOC normalizzati e deduplicati tra le fonti (un indicatore, più osservazioni). Attori ATT&CK arricchiti con settori, paesi e motivazione estratti dalle descrizioni, sempre marcati *derivato* e accompagnati dalla frase di evidenza. |
-| **Analisi** | **Minacce principali**: classifica dei gruppi ransomware più attivi contro organizzazioni italiane (12 mesi contro i 12 precedenti) e schede in italiano su come attaccano, strumenti, tecniche per fase e contromisure, solo con fatti da MITRE ATT&CK e avvisi CISA/FBI. Heatmap ATT&CK per attore e confronto tra due attori (tecniche comuni ed esclusive, indice di Jaccard). Dashboard per settore: attori, tecniche più usate, mitigazioni prioritarie, rivendicazioni ransomware. **Analisi**: incolli un testo o una lista di IOC, anche defanged, e ottieni lo stato di ogni indicatore (nuovo, già visto, collegato a un attore), le CVE presenti nel catalogo KEV e le tecniche e i software citati. |
-| **Produzione** | Editor dei report per l'analista: brief esecutivo di una pagina e scheda tecnica. **Digest giornaliero**: ogni mattina una bozza automatica con le novità (KEV, CSIRT Italia, rivendicazioni, IOC, fonti) e priorità suggerite da regole; l'analista sceglie cosa conta, scrive «perché ci riguarda» e «cosa fare» e ottiene il testo da inviare. |
-| **Diffusione** | Pagina pubblica **/briefs** con feed RSS ed export PDF e STIX 2.1. |
+| Sezione | Cosa fa | Requisito |
+|---|---|---|
+| **Briefing** (home) | I punti più importanti del periodo per un'organizzazione italiana: cosa è successo, perché conta, cosa fare. Nasce da una bozza automatica giornaliera (KEV, CSIRT Italia, rivendicazioni, IOC) rivista dall'analista e pubblicata come TLP:CLEAR, massimo 5 punti. | Riassunti giornalieri e settimanali; comunicazione a tutti i livelli |
+| **Minacce** | Classifica dei gruppi ransomware più attivi contro organizzazioni italiane e schede in italiano (come entrano, strumenti, tecniche ATT&CK per fase, contromisure specifiche e prioritarie, **contromisure MITRE D3FEND**), solo da fonti primarie. Profili di tutti gli attori ATT&CK e confronto tra due attori. | MITRE ATT&CK e D3FEND; analisi delle TTP |
+| **Settori** | Per ogni settore: attori, tecniche più usate, mitigazioni prioritarie collegate alle misure NIS2 (art. 24 D.Lgs. 138/2024), rivendicazioni. | Tradurre la minaccia in rischio e azioni |
+| **Analizza** | Triage di un testo o di una lista di IOC (anche defanged): nuovo, già visto o collegato a malware e attori; CVE nel catalogo KEV; tecniche citate. | Triage degli IOC; correlazione di più fonti |
+| **Report** | Brief esecutivo di una pagina e scheda tecnica; export PDF e **STIX 2.1**; i report pubblicati sono anche su un **server TAXII 2.1** (`/taxii2/`) consumabile da OpenCTI o MISP. | Report utilizzabili; STIX/TAXII |
 
-**Accademia** (`/accademia`): un percorso in 12 lezioni sul mestiere dell'analista CTI. Ogni lezione ha teoria essenziale, esercizi sui dati reali dell'app, errori da evitare e domande da colloquio con risposta modello. Ci sono anche un glossario e un allenamento a schede; i progressi restano salvati nel browser. La parte **Sul campo** racconta la giornata tipo e 8 casi pratici frequenti, passo per passo e con un esempio del prodotto da consegnare (flash alert, risposta al SOC, brief…).
+Dietro le quinte: raccolta automatica su GitHub Actions (feed ogni 6 ore, ATT&CK e D3FEND ogni settimana, digest ogni mattina), pagina [Fonti](https://threatbrief.salvo-bonavita9808.workers.dev/fonti) con lo stato di ogni fonte.
+
+**Area personale** (solo per l'analista, dopo l'accesso): digest giornaliero da rivedere, editor dei report, **Accademia** (12 lezioni sul mestiere CTI con domande da colloquio e allenamento a schede) e **Sul campo** (giornata tipo e 8 casi pratici).
 
 ## Rigore analitico (la parte che conta)
 
@@ -70,6 +72,7 @@ flowchart LR
 | Fonte | Contenuto | Frequenza | Chiave |
 |---|---|---|---|
 | MITRE ATT&CK Enterprise (STIX 2.1) | tattiche, tecniche, gruppi, software, mitigazioni | settimanale | no |
+| MITRE D3FEND (API) | contromisure difensive per ogni tecnica ATT&CK | settimanale | no |
 | CISA KEV | vulnerabilità sfruttate attivamente | 6 h | no |
 | abuse.ch ThreatFox, URLhaus | IOC (IP, domini, URL, hash) | 6 h | sì, gratuita |
 | AlienVault OTX | pulse, solo TLP:CLEAR/WHITE | 6 h | sì, gratuita (facoltativa) |

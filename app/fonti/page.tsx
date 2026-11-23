@@ -14,6 +14,7 @@ const ABOUT: Record<string, { what: string; schedule: string }> = {
   urlhaus: { what: "URL malevoli recenti (max 1000)", schedule: "ogni 6 ore" },
   otx: { what: "Pulse dei canali seguiti, solo TLP:CLEAR", schedule: "ogni 6 ore" },
   csirt_italia: { what: "Alert e bollettini (RSS)", schedule: "ogni 6 ore" },
+  mitre_d3fend: { what: "Contromisure difensive per ogni tecnica ATT&CK", schedule: "settimanale" },
   ransomware_live: { what: "Rivendicazioni ransomware contro vittime italiane (non verificate)", schedule: "ogni 6 ore" },
 };
 

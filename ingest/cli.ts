@@ -16,6 +16,7 @@ import { runSource, type SourceResult } from "./lib/run";
 import { ATTACK_URL, ingestAttack, parseAttackBundle, type StixBundle } from "./sources/attack";
 import { CSIRT_RSS_URL, ingestCsirt, parseCsirtRss } from "./sources/csirt";
 import { KEV_URL, ingestKev, parseKev, type KevCatalog } from "./sources/kev";
+import { ingestD3fend } from "./sources/d3fend";
 import { ingestOtx } from "./sources/otx";
 import { RANSOMWARE_IT_URL, ingestRansomwareLive, parseRansomwareLive, type RansomwareLiveVictim } from "./sources/ransomware";
 import { ingestThreatFox } from "./sources/threatfox";
@@ -58,6 +59,7 @@ const JOBS: Record<string, Job> = {
       return { version: p.version, total: p.total, valid: p.rows.length };
     },
   },
+  d3fend: { sourceId: "mitre_d3fend", run: ingestD3fend },
   threatfox: { sourceId: "threatfox", run: ingestThreatFox },
   urlhaus: { sourceId: "urlhaus", run: ingestUrlhaus },
   otx: { sourceId: "otx", run: ingestOtx },

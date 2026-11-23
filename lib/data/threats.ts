@@ -1,7 +1,7 @@
 import "server-only";
 import { rankForTechniques } from "@/lib/data/mitigations";
 import { getTactics } from "@/lib/data/attack";
-import { getVictimsSince, type RansomwareVictim } from "@/lib/data/ransomware";
+import { getVictimsSince } from "@/lib/data/ransomware";
 import { isoMonthsAgoStart } from "@/lib/kev-stats";
 import { publicDb } from "@/lib/supabase/public";
 import type { ThreatProfile } from "@/lib/threats/profiles";
@@ -93,6 +93,7 @@ export async function getProfileData(profile: ThreatProfile, today: Date) {
     previous: claims.filter((v) => v.discovered_at < since12).length,
     sectors: [...sectors.entries()].sort((a, b) => b[1] - a[1]),
     byTactic,
+    techniqueIds: techRows.map((t) => t.external_id),
     techniqueCount: techRows.length,
     tools: (check(tools, "strumenti") as { external_id: string; name: string; type: string }[]).filter(
       (t) => !profile.attack.software.includes(t.external_id),

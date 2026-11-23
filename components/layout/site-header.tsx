@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { AccountCard } from "./account-badge";
+import { AccountCard, AccountProvider } from "./account-badge";
 import { Brand } from "./brand";
 import { MobileNav } from "./mobile-nav";
 import { NavLinks, NavList } from "./nav-links";
@@ -11,7 +11,7 @@ import { NavLinks, NavList } from "./nav-links";
  */
 export function SiteHeader() {
   return (
-    <>
+    <AccountProvider>
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-line bg-surface lg:flex">
         <div className="px-4 py-4">
           <Brand />
@@ -22,10 +22,10 @@ export function SiteHeader() {
           </Suspense>
         </nav>
         <div className="border-t border-line p-3">
-          <AccountCard keepSession />
+          <AccountCard />
         </div>
       </aside>
       <MobileNav />
-    </>
+    </AccountProvider>
   );
 }

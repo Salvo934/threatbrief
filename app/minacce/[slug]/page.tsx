@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { Blocks } from "@/components/academy/rich-text";
+import { D3fendPanel } from "@/components/d3fend/d3fend-panel";
 import { MeasureBadges } from "@/components/nis2/measure-badges";
 import { VictimsChart } from "@/components/ransomware/victims-chart";
 import { Badge, Card, Skeleton, Stat } from "@/components/ui/primitives";
@@ -164,6 +165,8 @@ async function LiveData({ profile }: { profile: ThreatProfile }) {
           </p>
         </Card>
       )}
+
+      <D3fendPanel techniques={d.techniqueIds} />
 
       {profile.attack.relatedGroup && (
         <p className="text-sm text-muted">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { SubNav, SETTORI_TABS } from "@/components/ui/sub-nav";
 import { PageHeader, Skeleton } from "@/components/ui/primitives";
 import { listGroups } from "@/lib/data/attack";
 import { getVictimsSince } from "@/lib/data/ransomware";
@@ -13,6 +14,7 @@ export const metadata: Metadata = { title: "Settori" };
 export default function SettoriPage() {
   return (
     <>
+      <SubNav items={SETTORI_TABS} current="/settori" />
       <PageHeader title="Settori italiani">
         Per ogni settore: attori ATT&CK che lo hanno colpito, tecniche più usate, mitigazioni prioritarie con la misura
         NIS2 corrispondente e rivendicazioni ransomware contro organizzazioni italiane.

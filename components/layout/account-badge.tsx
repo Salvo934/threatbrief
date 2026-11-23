@@ -4,7 +4,7 @@ import { createBrowserClient } from "@supabase/ssr";
 import { FolderPen, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { logout } from "@/app/login/actions";
 
 type Account = { name: string; isAnalyst: boolean } | null;
@@ -16,7 +16,7 @@ type Account = { name: string; isAnalyst: boolean } | null;
  * Il client Supabase rinnova anche il token prima della scadenza (al posto del proxy di Next,
  * non supportato sui Worker). `keepSession`: solo un'istanza ricarica i dati al rinnovo.
  */
-function useAccount(keepSession: boolean): Account | undefined {
+function useAccountState(keepSession: boolean): Account | undefined {
   const router = useRouter();
   const [account, setAccount] = useState<Account | undefined>(undefined);
 
@@ -55,9 +55,20 @@ function useAccount(keepSession: boolean): Account | undefined {
 const initials = (name: string) =>
   name.split(/[\s@.]+/).filter(Boolean).slice(0, 2).map((p) => p[0]!.toUpperCase()).join("") || "?";
 
+const AccountContext = createContext<Account | undefined>(undefined);
+
+/** Stato dell'account condiviso da menu e scheda account (una sola lettura della sessione). */
+export function AccountProvider({ children }: { children: ReactNode }) {
+  const account = useAccountState(true);
+  return <AccountContext.Provider value={account}>{children}</AccountContext.Provider>;
+}
+
+/** `undefined` mentre carica, `null` se nessun accesso. */
+export const useAccount = () => useContext(AccountContext);
+
 /** Scheda account in fondo alla barra laterale (e nel menu mobile). */
-export function AccountCard({ keepSession = false, onNavigate }: { keepSession?: boolean; onNavigate?: () => void }) {
-  const account = useAccount(keepSession);
+export function AccountCard({ onNavigate }: { onNavigate?: () => void }) {
+  const account = useAccount();
 
   if (account === undefined) return <div aria-hidden className="h-[74px] animate-pulse rounded-lg bg-surface-2" />;
 

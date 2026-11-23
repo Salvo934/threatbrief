@@ -4,6 +4,7 @@ import { AttackMatrix, MatrixLegend } from "@/components/attack/attack-matrix";
 import { ViewToggle } from "@/components/attack/view-toggle";
 import { EmptyState, PageHeader, Skeleton, Stat } from "@/components/ui/primitives";
 import { buildMatrix, overlapStats } from "@/lib/attack/matrix";
+import { SubNav, MINACCE_TABS } from "@/components/ui/sub-nav";
 import {
   getActiveTechniques,
   getGroupByExternalId,
@@ -21,6 +22,7 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 export default function MatricePage(props: Props) {
   return (
     <>
+      <SubNav items={MINACCE_TABS} current="/matrice" />
       <PageHeader title="Matrice ATT&CK · confronto tra due attori">
         Sovrappone le tecniche di due gruppi per evidenziare TTP comuni (utili per detection condivise) ed
         esclusive (utili per distinguere un attore dall&apos;altro).

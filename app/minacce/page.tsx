@@ -7,12 +7,14 @@ import { Badge, Card, PageHeader, Skeleton } from "@/components/ui/primitives";
 import { getRansomwareRanking } from "@/lib/data/threats";
 import { formatDate, formatNumber } from "@/lib/format";
 import { PROFILES } from "@/lib/threats/profiles";
+import { SubNav, MINACCE_TABS } from "@/components/ui/sub-nav";
 
 export const metadata: Metadata = { title: "Minacce principali" };
 
 export default function MinaccePage() {
   return (
     <div className="space-y-6">
+      <SubNav items={MINACCE_TABS} current="/minacce" />
       <PageHeader title="Minacce principali per l'Italia">
         Chi colpisce di più le organizzazioni italiane, cosa usa, come attacca e come difendersi. La classifica si basa sulle
         rivendicazioni ransomware raccolte da ransomware.live (dichiarazioni dei gruppi, <strong>non verificate</strong>); le

@@ -5,6 +5,7 @@ import { CountryList, MotivationBadges, SectorBadges } from "@/components/actors
 import { EmptyState, PageHeader, Skeleton } from "@/components/ui/primitives";
 import { listGroups } from "@/lib/data/attack";
 import { SECTORS, sectorName } from "@/lib/format";
+import { SubNav, MINACCE_TABS } from "@/components/ui/sub-nav";
 
 export const metadata: Metadata = { title: "Attori" };
 
@@ -13,6 +14,7 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 export default function AttoriPage(props: PageProps<"/attori">) {
   return (
     <>
+      <SubNav items={MINACCE_TABS} current="/attori" />
       <PageHeader title="Threat actor">
         Gruppi documentati in MITRE ATT&CK Enterprise. Settori, paesi e motivazioni sono{" "}
         <strong>derivati automaticamente</strong> dalle descrizioni: la scheda di ogni attore mostra la frase da
