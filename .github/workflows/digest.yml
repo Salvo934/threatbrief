@@ -1,0 +1,31 @@
+# Bozza del digest giornaliero: ogni mattina, dopo la raccolta delle 06:41 UTC.
+# Genera solo la bozza (fatti + suggerimenti): la revisione la fa l'analista nell'app (/digest).
+name: Digest giornaliero
+
+on:
+  schedule:
+    - cron: "5 7 * * *" # 07:05 UTC = 08:05 (ora solare) / 09:05 (ora legale) a Roma
+  workflow_dispatch:
+
+concurrency:
+  group: digest
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run ingest -- digest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Briefcase, Building2, Database, FileText, GraduationCap, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
+  Briefcase, Building2, Database, FileText, GraduationCap, Newspaper, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,7 +20,13 @@ export const NAV: { title: string; items: Item[] }[] = [
       { href: "/mitigazioni", label: "Mitigazioni e NIS2", icon: ShieldCheck },
     ],
   },
-  { title: "Strumenti", items: [{ href: "/analisi", label: "Analisi IOC", icon: ScanSearch }] },
+  {
+    title: "Strumenti",
+    items: [
+      { href: "/analisi", label: "Analisi IOC", icon: ScanSearch },
+      { href: "/digest", label: "Digest giornaliero", icon: Newspaper },
+    ],
+  },
   { title: "Pubblicazioni", items: [{ href: "/briefs", label: "Briefs", icon: FileText }] },
   {
     title: "Formazione",

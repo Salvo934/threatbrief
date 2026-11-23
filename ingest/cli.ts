@@ -9,6 +9,7 @@
  * Una fonte senza chiave API viene "saltata" (non è un errore).
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { generateDigest } from "../lib/digest/build";
 import { createAdminClient } from "./lib/db";
 import { fetchJson } from "./lib/http";
 import { runSource, type SourceResult } from "./lib/run";
@@ -94,14 +95,28 @@ async function purge(db: SupabaseClient) {
   return true;
 }
 
+/** Bozza del digest giornaliero (dati delle ultime ore). La revisione la fa l'analista nell'app. */
+async function digest(db: SupabaseClient) {
+  try {
+    const d = await generateDigest(db, "automatico");
+    console.log(`✔ digest ${d.digest_date}: bozza con ${d.items} elementi`);
+    return true;
+  } catch (err) {
+    console.error(`✘ digest: ${err instanceof Error ? err.message : err}`);
+    return false;
+  }
+}
+
+const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = { purge, digest };
+
 async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes("--dry-run");
   const names = args.filter((a) => !a.startsWith("--")).flatMap((n) => GROUPS[n] ?? [n]);
-  const unknown = names.filter((n) => !JOBS[n] && n !== "purge");
+  const unknown = names.filter((n) => !JOBS[n] && !SPECIAL[n]);
   if (names.length === 0 || unknown.length) {
     console.error(
-      `Fonti disponibili: ${[...Object.keys(JOBS), "purge", ...Object.keys(GROUPS)].join(", ")}` +
+      `Fonti disponibili: ${[...Object.keys(JOBS), ...Object.keys(SPECIAL), ...Object.keys(GROUPS)].join(", ")}` +
         (unknown.length ? ` (sconosciute: ${unknown.join(", ")})` : ""),
     );
     process.exit(2);
@@ -118,7 +133,7 @@ async function main() {
   const db = createAdminClient();
   let failures = 0;
   for (const n of names) {
-    const ok = n === "purge" ? await purge(db) : await runSource(db, JOBS[n].sourceId, () => JOBS[n].run(db));
+    const ok = SPECIAL[n] ? await SPECIAL[n](db) : await runSource(db, JOBS[n].sourceId, () => JOBS[n].run(db));
     if (!ok) failures++;
   }
   if (failures) process.exit(1);
