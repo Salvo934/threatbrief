@@ -2,7 +2,7 @@ import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { GLOSSARY } from "@/lib/academy/glossary";
-import { CARDS, GROUPS, LESSONS } from "@/lib/academy";
+import { CARDS, CASES, GROUPS, LESSONS } from "@/lib/academy";
 
 /** Rotte esistenti nell'app (da app/), per controllare i link "Prova nell'app". */
 function routes(dir = "app", base = ""): string[] {
@@ -47,5 +47,24 @@ describe("Accademia", () => {
     expect(new Set(CARDS.map((c) => c.id)).size).toBe(CARDS.length);
     const slugs = new Set(LESSONS.map((l) => l.slug));
     for (const g of GLOSSARY) if (g.lesson) expect(slugs.has(g.lesson), g.term).toBe(true);
+  });
+
+  it("i casi sul campo sono completi e i loro link esistono", () => {
+    expect(new Set(CASES.map((c) => c.slug)).size).toBe(CASES.length);
+    for (const c of CASES) {
+      expect(c.steps.length, c.slug).toBeGreaterThanOrEqual(3);
+      expect(c.deliverable.text.length, c.slug).toBeGreaterThan(100);
+      expect(c.interview.length, c.slug).toBeGreaterThanOrEqual(1);
+      if (c.realExample) expect(c.realExample.url).toMatch(/^https:\/\//);
+      for (const p of c.inApp) expect(matches(p.href.split("?")[0]), `${c.slug}: ${p.href}`).toBe(true);
+    }
+  });
+
+  it("negli esempi simulati non ci sono IP reali: solo il blocco di documentazione 203.0.113.0/24", () => {
+    for (const c of CASES) {
+      for (const ip of c.deliverable.text.match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/g) ?? []) {
+        expect(ip.startsWith("203.0.113."), `${c.slug}: ${ip}`).toBe(true);
+      }
+    }
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Building2, Database, FileText, GraduationCap, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
+  Briefcase, Building2, Database, FileText, GraduationCap, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,11 +22,23 @@ export const NAV: { title: string; items: Item[] }[] = [
   },
   { title: "Strumenti", items: [{ href: "/analisi", label: "Analisi IOC", icon: ScanSearch }] },
   { title: "Pubblicazioni", items: [{ href: "/briefs", label: "Briefs", icon: FileText }] },
-  { title: "Formazione", items: [{ href: "/accademia", label: "Accademia", icon: GraduationCap }] },
+  {
+    title: "Formazione",
+    items: [
+      { href: "/accademia", label: "Accademia", icon: GraduationCap },
+      { href: "/accademia/sul-campo", label: "Sul campo", icon: Briefcase },
+    ],
+  },
   { title: "Sistema", items: [{ href: "/fonti", label: "Fonti", icon: Database }] },
 ];
 
-const isActive = (pathname: string, href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+const ALL_HREFS = NAV.flatMap((s) => s.items.map((i) => i.href));
+/** Attiva la voce col prefisso più lungo (così «Sul campo» non accende anche «Accademia»). */
+const isActive = (pathname: string, href: string) => {
+  if (href === "/") return pathname === "/";
+  const match = (h: string) => pathname === h || pathname.startsWith(`${h}/`);
+  return match(href) && !ALL_HREFS.some((h) => h !== href && h.length > href.length && match(h));
+};
 
 /** Voce attiva evidenziata: legge l'URL, quindi va dentro un <Suspense> (fallback: NavList senza evidenza). */
 export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {

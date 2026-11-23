@@ -10,6 +10,7 @@ import { normativa } from "./lessons/10-normativa";
 import { ransomware } from "./lessons/09-ransomware";
 import { scrittura } from "./lessons/08-scrittura";
 import { strumenti } from "./lessons/11-strumenti";
+import { CASES } from "./field/cases";
 import type { Lesson } from "./types";
 
 /** Percorso in ordine: fondamenti → tecnica → metodo → contesto → colloquio. */
@@ -32,9 +33,24 @@ export const GROUPS = ["Fondamenti", "Tecnica", "Metodo", "Contesto", "Colloquio
 
 export const getLesson = (slug: string) => LESSONS.find((l) => l.slug === slug);
 
-export type Card = { id: string; lesson: string; lessonTitle: string; q: string; a: string };
+export const getCase = (slug: string) => CASES.find((c) => c.slug === slug);
+export { CASES };
 
-/** Tutte le domande da colloquio, con id stabile per salvare i progressi. */
-export const CARDS: Card[] = LESSONS.flatMap((l) =>
-  l.interview.map((item, i) => ({ id: `${l.slug}#${i}`, lesson: l.slug, lessonTitle: l.title, ...item })),
-);
+/** `group`: lezione o caso «sul campo»; `href`: dove studiare la domanda. */
+export type Card = { id: string; group: string; groupTitle: string; href: string; q: string; a: string };
+
+/** Tutte le domande da colloquio (lezioni + casi), con id stabile per salvare i progressi. */
+export const CARDS: Card[] = [
+  ...LESSONS.flatMap((l) =>
+    l.interview.map((item, i) => ({ id: `${l.slug}#${i}`, group: l.slug, groupTitle: l.title, href: `/accademia/${l.slug}`, ...item })),
+  ),
+  ...CASES.flatMap((c) =>
+    c.interview.map((item, i) => ({
+      id: `campo:${c.slug}#${i}`,
+      group: `campo:${c.slug}`,
+      groupTitle: `Sul campo · ${c.title}`,
+      href: `/accademia/sul-campo/${c.slug}`,
+      ...item,
+    })),
+  ),
+];

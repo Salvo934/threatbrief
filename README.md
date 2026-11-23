@@ -18,7 +18,7 @@
 | **Produzione** | Editor dei report per l'analista: brief esecutivo di una pagina e scheda tecnica. |
 | **Diffusione** | Pagina pubblica **/briefs** con feed RSS ed export PDF e STIX 2.1. |
 
-**Accademia** (`/accademia`): un percorso in 12 lezioni sul mestiere dell'analista CTI. Ogni lezione ha teoria essenziale, esercizi sui dati reali dell'app, errori da evitare e domande da colloquio con risposta modello. Ci sono anche un glossario e un allenamento a schede; i progressi restano salvati nel browser.
+**Accademia** (`/accademia`): un percorso in 12 lezioni sul mestiere dell'analista CTI. Ogni lezione ha teoria essenziale, esercizi sui dati reali dell'app, errori da evitare e domande da colloquio con risposta modello. Ci sono anche un glossario e un allenamento a schede; i progressi restano salvati nel browser. La parte **Sul campo** racconta la giornata tipo e 8 casi pratici frequenti, passo per passo e con un esempio del prodotto da consegnare (flash alert, risposta al SOC, brief…).
 
 ## Rigore analitico (la parte che conta)
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Flashcards } from "@/components/academy/flashcards";
 import { PageHeader } from "@/components/ui/primitives";
-import { CARDS, LESSONS } from "@/lib/academy";
+import { CARDS, CASES, LESSONS } from "@/lib/academy";
 
 export const metadata: Metadata = { title: "Allenamento · Accademia" };
 
@@ -15,7 +15,13 @@ export default function AllenamentoPage() {
         sii onesto: se non l&apos;avresti detta in modo chiaro, segnala «da ripassare». Le domande difficili tornano nel
         filtro «Da ripassare».
       </PageHeader>
-      <Flashcards cards={CARDS} lessons={LESSONS.map((l) => ({ slug: l.slug, title: l.title }))} />
+      <Flashcards
+        cards={CARDS}
+        groups={[
+          ...LESSONS.map((l) => ({ id: l.slug, title: l.title })),
+          ...CASES.map((c) => ({ id: `campo:${c.slug}`, title: `Sul campo · ${c.title}` })),
+        ]}
+      />
     </div>
   );
 }

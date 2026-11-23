@@ -9,7 +9,7 @@ import { useProgress } from "@/lib/academy/progress";
 type Filter = "tutte" | "da-ripassare" | "nuove";
 
 /** Allenamento a schede: domanda → risposta modello → «la sapevo» / «da ripassare». */
-export function Flashcards({ cards, lessons }: { cards: Card[]; lessons: { slug: string; title: string }[] }) {
+export function Flashcards({ cards, groups }: { cards: Card[]; groups: { id: string; title: string }[] }) {
   const { progress, update } = useProgress();
   const [filter, setFilter] = useState<Filter>("tutte");
   const [lesson, setLesson] = useState("");
@@ -20,7 +20,7 @@ export function Flashcards({ cards, lessons }: { cards: Card[]; lessons: { slug:
     const status = progress?.cards ?? {};
     return cards.filter(
       (c) =>
-        (!lesson || c.lesson === lesson) &&
+        (!lesson || c.group === lesson) &&
         (filter === "tutte" || (filter === "da-ripassare" ? status[c.id] === "review" : !status[c.id])),
     );
   }, [cards, progress, filter, lesson]);
@@ -55,10 +55,10 @@ export function Flashcards({ cards, lessons }: { cards: Card[]; lessons: { slug:
           value={lesson}
           onChange={(e) => { setLesson(e.target.value); setIndex(0); setShown(false); }}
           className="rounded-md border border-line bg-surface px-2 py-1 text-sm"
-          aria-label="Filtra per lezione"
+          aria-label="Filtra per lezione o caso"
         >
-          <option value="">Tutte le lezioni</option>
-          {lessons.map((l) => <option key={l.slug} value={l.slug}>{l.title}</option>)}
+          <option value="">Tutte le lezioni e i casi</option>
+          {groups.map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
         </select>
         <span className="ml-auto text-xs tabular-nums text-muted">
           {progress === null ? "…" : `${counts.known} sapute · ${counts.review} da ripassare · ${cards.length} in tutto`}
@@ -72,7 +72,7 @@ export function Flashcards({ cards, lessons }: { cards: Card[]; lessons: { slug:
       ) : (
         <div className="rounded-xl border border-line bg-surface p-5 shadow-sm sm:p-6">
           <div className="flex items-center justify-between gap-3 text-xs text-muted">
-            <Link href={`/accademia/${card.lesson}`} className="hover:underline">{card.lessonTitle}</Link>
+            <Link href={card.href} className="hover:underline">{card.groupTitle}</Link>
             <span className="tabular-nums">{(index % deck.length) + 1} / {deck.length}</span>
           </div>
           <p className="mt-3 text-lg font-semibold leading-snug">{card.q}</p>

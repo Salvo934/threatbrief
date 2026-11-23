@@ -1,9 +1,9 @@
-import { BookOpen, Clock, Layers, MessagesSquare } from "lucide-react";
+import { BookOpen, Briefcase, Clock, Layers, MessagesSquare } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LessonCheck, PathProgress } from "@/components/academy/progress-widgets";
 import { PageHeader } from "@/components/ui/primitives";
-import { CARDS, GROUPS, LESSONS } from "@/lib/academy";
+import { CARDS, CASES, GROUPS, LESSONS } from "@/lib/academy";
 import { GLOSSARY } from "@/lib/academy/glossary";
 
 export const metadata: Metadata = { title: "Accademia" };
@@ -43,6 +43,17 @@ export default function AccademiaPage() {
           </Link>
         </div>
       </div>
+
+      <Link href="/accademia/sul-campo" className="flex items-start gap-3 rounded-lg border border-accent/40 bg-accent-soft p-4 hover:border-accent">
+        <Briefcase aria-hidden className="mt-0.5 size-5 shrink-0 text-accent" />
+        <span>
+          <span className="block font-medium">Sul campo: com&apos;è davvero il lavoro</span>
+          <span className="block text-sm text-muted">
+            La giornata tipo e {CASES.length} casi pratici frequenti, passo per passo: triage, richieste del SOC, vulnerabilità
+            sfruttate, phishing, fornitori su un leak site, report alla direzione, profili, incidenti.
+          </span>
+        </span>
+      </Link>
 
       <p className="flex items-center gap-2 text-sm text-muted">
         <Layers aria-hidden className="size-4" /> Circa {Math.round(totalMinutes / 60)} ore di studio, più gli esercizi. Consiglio: una o due lezioni a settimana, con l&apos;esercizio fatto per davvero.
