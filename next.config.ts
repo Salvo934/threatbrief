@@ -21,6 +21,8 @@ const PUBLIC_PATHS = [
   "/briefs/rss.xml",
   "/briefs/:slug",
   "/briefs/:slug/stix",
+  "/minacce",
+  "/minacce/:slug",
   "/accademia",
   "/accademia/:slug",
   "/accademia/sul-campo/:slug",

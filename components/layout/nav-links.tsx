@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Briefcase, Building2, Database, FileText, GraduationCap, Newspaper, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
+  Briefcase, Building2, Database, FileText, GraduationCap, Newspaper, ShieldAlert, Grid3x3, LayoutDashboard, ScanSearch, ShieldCheck, Users, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,6 +14,7 @@ export const NAV: { title: string; items: Item[] }[] = [
   {
     title: "Intelligence",
     items: [
+      { href: "/minacce", label: "Minacce principali", icon: ShieldAlert },
       { href: "/attori", label: "Attori", icon: Users },
       { href: "/matrice", label: "Matrice ATT&CK", icon: Grid3x3 },
       { href: "/settori", label: "Settori", icon: Building2 },
