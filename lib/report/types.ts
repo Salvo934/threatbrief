@@ -31,6 +31,8 @@ export type ReportRow = {
   is_example: boolean;
   /** creato dalla pipeline «Difesa e aerospazio»: bozza da verificare */
   auto_generated: boolean;
+  /** sintesi, impatto, azioni e fatti chiave scritti con IA (da verificare) */
+  ai_assisted: boolean;
   created_at: string;
   updated_at: string;
 };

@@ -71,7 +71,7 @@ describe("RSS", async () => {
   const { buildRss } = await import("@/lib/report/rss");
   it("fa l'escape e marca gli esempi", () => {
     const xml = buildRss(
-      [{ id: "1", slug: "a-b", title: "R&D <test>", kind: "evento", tlp: "CLEAR", status: "published", published_at: "2026-11-22T10:00:00Z", exec_risk: "alto", exec_summary: "x", is_example: true, auto_generated: false, updated_at: "2026-11-22T10:00:00Z", confidence: "medio" }],
+      [{ id: "1", slug: "a-b", title: "R&D <test>", kind: "evento", tlp: "CLEAR", status: "published", published_at: "2026-11-22T10:00:00Z", exec_risk: "alto", exec_summary: "x", is_example: true, auto_generated: false, ai_assisted: false, updated_at: "2026-11-22T10:00:00Z", confidence: "medio" }],
       "https://example.test",
     );
     expect(xml).toContain("<title>[ESEMPIO] R&amp;D &lt;test&gt;</title>");

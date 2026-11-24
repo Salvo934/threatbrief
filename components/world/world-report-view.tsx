@@ -37,6 +37,16 @@ export function WorldReportView({ report, tactics }: { report: WorldReport; tact
         malware e gruppi sono indizi, non attribuzioni.
       </div>
 
+      {d.ai && (
+        <Card title="In breve">
+          <p className="text-sm leading-relaxed">{d.ai.reading}</p>
+          <p className="mt-2 text-xs text-muted">
+            Scritto con IA ({d.ai.model}) usando solo i dati qui sotto e quelli del giorno prima; il testo viene scartato se cita
+            numeri che non compaiono nei dati. Non rivisto da un analista.
+          </p>
+        </Card>
+      )}
+
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat label="Rivendicazioni ransomware" value={formatNumber(d.claims.total)} hint={d.claims.partial ? "dato parziale" : "nel mondo, 24 ore"} />
         <Stat label="Segnalazioni di malware" value={formatNumber(d.malware.reduce((s, m) => s + m.count, 0))} hint="prime 10 famiglie" />

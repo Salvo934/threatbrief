@@ -2,6 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { rankMitigations, type MitigatesLink } from "../attack/mitigations";
 import { PROFILES } from "../threats/profiles";
 import { aggregateClaims, matchAttack, normName, rankD3fend, techniqueWeights, topMalware, type AttackObject, type WorldClaim } from "./rules";
+import { aiEnabled, readWorldWithAi } from "../ai/claude";
+import { mitigationIt } from "../i18n/attack-it";
+import { sectorRawIt } from "../threats/sectors-it";
+import { clip, unknownNumbers } from "../ai/guard";
 import type { AttackRef, WorldReportData, WorldSource } from "./types";
 
 // Import relativi (niente alias "@/"): questo modulo è usato dallo script di ingestion.
@@ -160,14 +164,58 @@ export async function buildWorldReport(db: SupabaseClient, now = new Date()) {
   return { start, end, data };
 }
 
+const countryIt = new Intl.DisplayNames(["it"], { type: "region" });
+const paese = (code: string) => {
+  try {
+    return countryIt.of(code) ?? code;
+  } catch {
+    return code;
+  }
+};
+
+/** I dati essenziali del rapporto, quelli che l'IA può leggere (solo aggregati pubblici). */
+export function compactForAi(d: WorldReportData) {
+  return {
+    rivendicazioni: d.claims.total,
+    gruppi: d.claims.groups.map((g) => ({ nome: g.name, vittime: g.count, attack: g.attack?.name ?? null })),
+    paesi: d.claims.countries.slice(0, 6).map((c) => ({ paese: paese(c.code), vittime: c.count })),
+    settori: d.claims.sectors.slice(0, 6).map((x) => ({ settore: sectorRawIt(x.label), vittime: x.count })),
+    malware: d.malware.map((m) => ({ nome: m.name, segnalazioni: m.count })),
+    nuove_kev: d.kev.map((k) => ({ cve: k.cve_id, prodotto: `${k.vendor} ${k.product}`, ransomware: k.ransomware })),
+    attori_in_attack: d.actors.length,
+    tecniche: d.techniques.slice(0, 8).map((t) => ({ id: t.external_id, nome: t.name, attori: t.actors })),
+    mitigazioni: d.mitigations.slice(0, 5).map((m) => ({ id: m.external_id, nome: mitigationIt(m.external_id, m.name), tecniche: m.techniques })),
+  };
+}
+
+/** Lettura con IA: scartata se cita numeri che non sono nei dati. */
+async function aiReading(db: SupabaseClient, data: WorldReportData, reportDate: string) {
+  if (!aiEnabled()) return null;
+  const { data: prev } = await db.from("world_reports").select("data").lt("report_date", reportDate).order("report_date", { ascending: false }).limit(1).maybeSingle();
+  const today = compactForAi(data);
+  const yesterday = prev?.data ? compactForAi(prev.data as WorldReportData) : null;
+  const res = await readWorldWithAi(today, yesterday);
+  if (!res.ok) {
+    console.warn(`  IA: lettura non disponibile (${res.reason})`);
+    return null;
+  }
+  const bad = unknownNumbers(res.value.reading, { today, yesterday });
+  if (bad.length) {
+    console.warn(`  IA: lettura scartata, numeri non presenti nei dati: ${bad.join(", ")}`);
+    return null;
+  }
+  return { reading: clip(res.value.reading, 700), model: res.model };
+}
+
 /** Genera (o rigenera) il rapporto del giorno, con data di Roma. */
 export async function generateWorldReport(db: SupabaseClient, now = new Date()) {
   const { start, end, data } = await buildWorldReport(db, now);
   const report_date = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome" }).format(now);
+  data.ai = await aiReading(db, data, report_date);
   const { error } = await db.from("world_reports").upsert(
     { report_date, window_start: start.toISOString(), window_end: end.toISOString(), generated_at: now.toISOString(), data },
     { onConflict: "report_date" },
   );
   if (error) throw new Error(`salvataggio rapporto: ${error.message}`);
-  return { report_date, claims: data.claims.total, actors: data.actors.length, techniques: data.techniques.length };
+  return { report_date, claims: data.claims.total, actors: data.actors.length, techniques: data.techniques.length, ai: Boolean(data.ai) };
 }

@@ -59,9 +59,16 @@ async function Editor({ params }: Pick<Props, "params">) {
 
       {r.auto_generated && (
         <div className="rounded-lg border border-warn-bg bg-warn-bg/40 px-4 py-3 text-sm">
-          <strong>Bozza creata automaticamente</strong> da un avviso ufficiale su difesa e aerospazio. Fatti, tecniche e
-          fonte vengono dall&apos;avviso; rischio, impatto e azioni sono <strong>suggerimenti da verificare</strong>. Controlla,
-          correggi e poi pubblica: la pubblicazione resta una tua scelta.
+          <strong>Bozza creata automaticamente</strong> da un avviso ufficiale su difesa e aerospazio.{" "}
+          {r.ai_assisted ? (
+            <>
+              Sintesi, impatto, azioni e fatti chiave sono <strong>scritti con IA</strong> usando solo il testo dell&apos;avviso: ogni
+              fatto riporta la citazione originale, verificata automaticamente. Il rischio resta una regola esplicita.
+            </>
+          ) : (
+            <>Fatti, tecniche e fonte vengono dall&apos;avviso; rischio, impatto e azioni sono <strong>suggerimenti da verificare</strong>.</>
+          )}{" "}
+          Controlla, correggi e poi pubblica: la pubblicazione resta una tua scelta.
         </div>
       )}
 

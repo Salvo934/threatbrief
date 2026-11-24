@@ -39,6 +39,7 @@ function Header({ full, label }: { full: ReportFull; label: string }) {
   return (
     <View>
       {r.is_example && <Text style={s.example}>ESEMPIO - contenuto dimostrativo del portfolio ThreatBrief, non un prodotto di intelligence reale.</Text>}
+      {r.ai_assisted && <Text style={s.example}>Parti testuali redatte con IA a partire dalla fonte citata e riviste dall&apos;analista.</Text>}
       <Text style={s.title}>{r.title}</Text>
       <Text style={s.meta}>
         {label} - {KIND[r.kind]}: {full.subject.label} - {new Date(r.published_at ?? r.updated_at).toLocaleDateString("it-IT")} - confidenza complessiva {CONFIDENCE_LABEL[r.confidence]}

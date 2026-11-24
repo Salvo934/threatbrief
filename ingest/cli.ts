@@ -124,7 +124,7 @@ async function digest(db: SupabaseClient) {
 async function world(db: SupabaseClient) {
   try {
     const r = await generateWorldReport(db);
-    console.log(`✔ rapporto della notte ${r.report_date}: ${r.claims} rivendicazioni, ${r.actors} attori collegati ad ATT&CK, ${r.techniques} tecniche`);
+    console.log(`✔ rapporto della notte ${r.report_date}: ${r.claims} rivendicazioni, ${r.actors} attori collegati ad ATT&CK, ${r.techniques} tecniche${r.ai ? ", lettura scritta con IA" : ""}`);
     return true;
   } catch (err) {
     console.error(`✘ rapporto della notte: ${err instanceof Error ? err.message : err}`);

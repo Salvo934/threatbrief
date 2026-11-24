@@ -21,6 +21,7 @@ export const fixtureReport: ReportFull = {
     tech_notes: null,
     is_example: true,
     auto_generated: false,
+    ai_assisted: true, // anche con la riga «redatto con IA» il PDF deve stare in una pagina
     created_at: "2026-11-22T09:00:00Z",
     updated_at: "2026-11-22T10:00:00Z",
   },

@@ -2,6 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { rankMitigations, type MitigatesLink } from "../attack/mitigations";
 import { mitigationIt } from "../i18n/attack-it";
 import { slugify } from "../report/validate";
+import { aiEnabled, draftAdvisoryWithAi } from "../ai/claude";
+import { validateAdvisoryAi, type AdvisoryAi } from "../ai/guard";
+import { mergeAiDraft } from "./ai-draft";
+import { fetchCisaAdvisories } from "./cisa-feed";
 import { composeDraft, executiveSummary, type Reason } from "./rules";
 
 // Import relativi (niente alias "@/"): questo modulo è usato dallo script di ingestion.
@@ -50,6 +54,25 @@ export async function generateDefenseDrafts(db: SupabaseClient) {
     allRows<MitigatesLink>((f, t) => db.from("v_technique_mitigations").select("mitigation_id, technique_id").order("mitigation_id").order("technique_id").range(f, t), "relazioni mitigazioni"),
   ]);
 
+  // IA facoltativa: serve il testo completo dell'avviso (nel DB ne salviamo solo l'inizio).
+  const useAi = aiEnabled();
+  let fullText = new Map<string, string>();
+  let validTechniques = new Map<string, string>(); // external_id → id STIX
+  if (useAi) {
+    try {
+      fullText = new Map((await fetchCisaAdvisories()).map((x) => [x.url, x.text]));
+    } catch (err) {
+      console.warn(`  IA: testo degli avvisi non disponibile (${err instanceof Error ? err.message : err}), bozze senza IA`);
+    }
+    const all = await allRows<{ id: string; external_id: string }>(
+      (f, t) => db.from("attack_techniques").select("id, external_id").eq("revoked", false).eq("deprecated", false).order("id").range(f, t),
+      "tecniche ATT&CK",
+    );
+    validTechniques = new Map(all.map((t) => [t.external_id, t.id]));
+  } else {
+    console.log("  IA non configurata (ANTHROPIC_API_KEY assente): bozze a modello");
+  }
+
   let created = 0;
   for (const a of alerts) {
     const item = await q<{ title: string; url: string; published_at: string; summary: string | null }>(
@@ -62,6 +85,28 @@ export async function generateDefenseDrafts(db: SupabaseClient) {
           "tecniche",
         )
       : [];
+    const techNotes = new Map(techs.map((t) => [t.id, "Citata nell'avviso"]));
+
+    let ai: AdvisoryAi | null = null;
+    const text = fullText.get(item.url);
+    if (useAi && text) {
+      const date = new Date(item.published_at).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
+      const res = await draftAdvisoryWithAi({ title: item.title, date, text });
+      if (res.ok) {
+        ai = validateAdvisoryAi(res.value, text, new Set(validTechniques.keys()));
+        if (!ai) console.warn(`  IA: «${item.title}» scartata dai controlli, bozza a modello`);
+      } else {
+        console.warn(`  IA: «${item.title}» non disponibile (${res.reason}), bozza a modello`);
+      }
+    }
+    // Tecniche descritte a parole e trovate dall'IA (con citazione verificata).
+    for (const t of ai?.techniques ?? []) {
+      const id = validTechniques.get(t.id);
+      if (id && !techNotes.has(id)) {
+        techs.push({ id, external_id: t.id });
+        techNotes.set(id, `Descritta nell'avviso, individuata con IA: «${t.quote}»`);
+      }
+    }
     const kev = a.cves.length
       ? await q<{ cve_id: string; known_ransomware_use: boolean }[]>(db.from("kev_vulnerabilities").select("cve_id, known_ransomware_use").in("cve_id", a.cves), "KEV")
       : [];
@@ -91,6 +136,8 @@ export async function generateDefenseDrafts(db: SupabaseClient) {
       d3fend: [...d3Count.values()].sort((x, y) => y.n - x.n || x.label.localeCompare(y.label)).slice(0, 6),
     });
 
+    const finalDraft = ai ? mergeAiDraft(draft, ai, a.cves.filter((c) => kevMap.has(c))) : draft;
+
     const subjectGroup = a.actors.length === 1
       ? await q<{ id: string } | null>(db.from("attack_groups").select("id").eq("external_id", a.actors[0].external_id).limit(1).maybeSingle(), "gruppo")
       : null;
@@ -106,12 +153,13 @@ export async function generateDefenseDrafts(db: SupabaseClient) {
         tlp: "CLEAR",
         confidence: "medio",
         status: "draft",
-        exec_risk: draft.risk,
-        exec_summary: draft.summary,
-        exec_impact: draft.impact,
-        exec_actions: draft.actions,
-        tech_notes: draft.tech_notes,
+        exec_risk: finalDraft.risk,
+        exec_summary: finalDraft.summary,
+        exec_impact: finalDraft.impact,
+        exec_actions: finalDraft.actions,
+        tech_notes: finalDraft.tech_notes,
         auto_generated: true,
+        ai_assisted: ai !== null,
       }).select("id").single(),
       "report",
     );
@@ -122,16 +170,17 @@ export async function generateDefenseDrafts(db: SupabaseClient) {
       "fonte",
     );
     await q(db.from("report_statements").insert(
-      draft.statements.map((s, position) => ({
+      finalDraft.statements.map((s, position) => ({
         report_id: report.id, section: s.section, kind: s.kind, body: s.body, position,
         source_id: s.kind === "fatto" ? source.id : null,
         confidence: "confidence" in s ? s.confidence : null,
       })),
     ), "fatti e valutazioni");
     if (techs.length) {
-      await q(db.from("report_techniques").insert(techs.map((t) => ({ report_id: report.id, technique_id: t.id, note: "Citata nell'avviso" }))), "tecniche del report");
+      await q(db.from("report_techniques").insert(techs.map((t) => ({ report_id: report.id, technique_id: t.id, note: techNotes.get(t.id) ?? null }))), "tecniche del report");
     }
     await q(db.from("defense_alerts").update({ report_id: report.id }).eq("id", a.id), "collegamento avviso-report");
+    console.log(`  bozza «${item.title}»${ai ? ` scritta con IA (${ai.facts.length} fatti, ${ai.techniques.length} tecniche, ${ai.rejected} proposte scartate)` : " a modello"}`);
     created++;
   }
   return created;

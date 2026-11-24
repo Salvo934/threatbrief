@@ -19,6 +19,8 @@ export type WorldReportData = {
   actors: { label: string; via: "rivendicazione" | "malware"; attack: AttackRef }[];
   techniques: { external_id: string; name: string; tactics: string[]; actors: number }[];
   mitigations: { external_id: string; name: string; techniques: number; score: number }[];
+  /** lettura in italiano scritta con IA dai soli dati del rapporto (assente se l'IA non è configurata) */
+  ai?: { reading: string; model: string } | null;
   d3fend: { measures: { id: string; label: string; tactic: string; iri: string }[]; techniques: number; total: number }[];
 };
 

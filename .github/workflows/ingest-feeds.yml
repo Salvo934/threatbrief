@@ -25,10 +25,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # kev, threatfox, urlhaus, otx, csirt, ransomware.live + pulizia IOC > 90 giorni
+      # kev, threatfox, urlhaus, otx, csirt, avvisi CISA, ransomware.live, pulizia IOC > 90 giorni,
+      # bozze automatiche «Difesa e aerospazio» (con IA se ANTHROPIC_API_KEY è impostata)
       - run: npm run ingest -- feeds
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
           OTX_API_KEY: ${{ secrets.OTX_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

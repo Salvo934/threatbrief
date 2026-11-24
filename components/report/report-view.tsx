@@ -30,6 +30,7 @@ export function ReportView({ full, mode, base, actions, mitigations }: {
           <TlpLabel tlp={r.tlp} />
           <Badge>{KIND_LABEL[r.kind]}</Badge>
           {r.is_example && <Badge tone="warn">ESEMPIO · contenuto dimostrativo</Badge>}
+          {r.ai_assisted && <Badge title="Parti testuali scritte con IA dalla fonte citata e verificate dall'analista">redatto con IA, rivisto dall&apos;analista</Badge>}
           {r.status !== "published" && <Badge>{r.status === "draft" ? "bozza" : "finale, non pubblicato"}</Badge>}
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">{r.title}</h1>
