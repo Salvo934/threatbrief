@@ -31,7 +31,7 @@ const ROWS: { req: string; where: { label: string; href: string }[]; how: string
   {
     req: "OSINT e pivoting sull'infrastruttura",
     where: [{ label: "Indagine OSINT (area analista)", href: "/osint" }],
-    how: "Indagine passiva su domini, IP, URL e hash da fonti aperte (RDAP, DNS, Certificate Transparency, Shodan InternetDB) e dal database interno: segnali motivati, giudizio con Admiralty, pivot cliccabili e un registro riproducibile (CSV, JSON, STIX) con ora di consultazione di ogni fonte. Solo infrastruttura, mai persone.",
+    how: "Indagine passiva su domini, IP, URL e hash da fonti aperte (RDAP, DNS, Certificate Transparency, Shodan InternetDB) e dal database interno: segnali motivati, giudizio con Admiralty, pivot cliccabili e un registro riproducibile (CSV, JSON, STIX) con ora di consultazione di ogni fonte. Triage di liste con raggruppamento in campagne (stesso IP, name server, marchio, registrazione, malware) e note scritte con IA verificate sui dati. Solo infrastruttura, mai persone.",
   },
   {
     req: "Valutazione delle fonti e controllo di qualità dei dati",

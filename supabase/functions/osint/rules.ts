@@ -171,7 +171,7 @@ const days = (iso: string | undefined, now: number) => (iso ? Math.floor((now - 
 export function signals(e: Evidence): Signal[] {
   const out: Signal[] = [];
   for (const k of e.knownBad ?? []) {
-    out.push({ level: "alto", source: k.sources.join(", "), text: `Segnalato come malevolo${k.malware.length ? ` (${k.malware.join(", ")})` : ""}${k.lastSeen ? `, ultima segnalazione ${k.lastSeen.slice(0, 10)}` : ""}${k.groups.length ? `; malware usato da ${k.groups.length} gruppi documentati (indizio, non attribuzione)` : ""}.` });
+    out.push({ level: "alto", source: k.sources.join(", "), text: `Segnalato come malevolo${k.malware.length ? ` (${k.malware.join(", ")})` : ""}${k.lastSeen ? `, ultima segnalazione ${k.lastSeen.slice(0, 10)}` : ""}${k.groups.length ? `; malware usato da ${k.groups.length === 1 ? "1 gruppo documentato" : `${k.groups.length} gruppi documentati`} (indizio, non attribuzione)` : ""}.` });
   }
   if (e.unresolved) out.push({ level: "info", source: "DNS (Cloudflare)", text: "Il dominio non risolve: non registrato oppure non attivo (nessun record DNS)." });
   const age = days(e.rdap?.registered, e.now);

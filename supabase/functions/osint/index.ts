@@ -51,7 +51,7 @@ const internetDb = (log: SourceLog[], ip: string) =>
   source(log, "Shodan InternetDB", `https://internetdb.shodan.io/${ip}`,
     async (r) => (await r.json()) as { ports?: number[]; vulns?: string[]; hostnames?: string[]; tags?: string[]; cpes?: string[] });
 
-async function investigate(ind: Indicator, db: ReturnType<typeof createClient>) {
+async function investigate(ind: Indicator, db: ReturnType<typeof createClient>, light = false) {
   const log: SourceLog[] = [];
   const now = Date.now();
   const host = ind.kind === "url" ? ind.host! : ind.kind === "domain" ? ind.value : null;
@@ -65,7 +65,8 @@ async function investigate(ind: Indicator, db: ReturnType<typeof createClient>) 
     const [rdapJson, a, aaaa, mx, ns, txt, crt] = await Promise.all([
       source(log, "RDAP (registrazione)", `https://rdap.org/domain/${reg}`, async (r) => await r.json()),
       doh(log, domain, "A"), doh(log, domain, "AAAA"), doh(log, reg, "MX"), doh(log, reg, "NS"), doh(log, reg, "TXT"),
-      source(log, "Certificate Transparency (crt.sh)", `https://crt.sh/?q=${encodeURIComponent(`%.${reg}`)}&output=json&exclude=expired`,
+      // Nel triage di una lista crt.sh (lento) viene saltato: modalità «leggera».
+      light ? Promise.resolve(null) : source(log, "Certificate Transparency (crt.sh)", `https://crt.sh/?q=${encodeURIComponent(`%.${reg}`)}&output=json&exclude=expired`,
         async (r) => ((await r.json()) as unknown[]).slice(0, 3000) as { name_value?: string; not_before?: string; issuer_name?: string }[], {}, 45_000),
     ]);
     result.domain = reg;
@@ -151,18 +152,23 @@ Deno.serve(async (req) => {
   if (!analyst) return json({ error: "Strumento riservato all'analista" }, 403);
 
   let query = "";
+  let light = false;
+  let batchId: string | null = null;
   try {
-    query = String(((await req.json()) as { query?: unknown }).query ?? "").slice(0, 2048);
+    const body = (await req.json()) as { query?: unknown; light?: unknown; batch_id?: unknown };
+    query = String(body.query ?? "").slice(0, 2048);
+    light = body.light === true;
+    batchId = typeof body.batch_id === "string" && /^[0-9a-f-]{36}$/i.test(body.batch_id) ? body.batch_id : null;
   } catch {
     return json({ error: "Richiesta non valida" }, 400);
   }
   const ind = classify(query);
   if (!ind) return json({ error: "Indicatore non riconosciuto: inserisci un dominio, un IP, un URL o un hash (MD5, SHA-1, SHA-256)." }, 400);
 
-  const out = await investigate(ind, db);
+  const out = await investigate(ind, db, light);
   const { data: saved, error } = await db.from("osint_lookups").insert({
     query, kind: ind.kind, verdict: out.verdict.label, admiralty: out.verdict.admiralty,
-    signals: out.signals, sources: out.sources, result: out.result,
+    signals: out.signals, sources: out.sources, result: out.result, batch_id: batchId,
   }).select("id, created_at").single();
   return json({ ...out, id: saved?.id ?? null, created_at: saved?.created_at ?? new Date().toISOString(), saveError: error?.message ?? null });
 });

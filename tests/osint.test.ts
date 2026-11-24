@@ -122,6 +122,13 @@ describe("OSINT: registro di ricerca", () => {
     expect(line).toContain(",1,0,1,1,"); // 1 segnale alto, 0 medi, 1 fonte ok su 1
   });
 
+  it("CSV del triage: colonna del gruppo per ogni indicatore", async () => {
+    const { lookupsToCsv } = await import("@/lib/osint/export");
+    const csv = lookupsToCsv([row], new Map([[row.query, "A"]]));
+    expect(csv.split("\n")[0].endsWith(",gruppo")).toBe(true);
+    expect(csv.split("\n")[1].endsWith(",A")).toBe(true);
+  });
+
   it("citazioni: fonte, URL e ora esatta di consultazione", async () => {
     const { citations } = await import("@/lib/osint/export");
     expect(citations(row)[0]).toBe("RDAP. https://rdap.org/domain/x (consultato il 2026-11-24 14:50:10 UTC; esito: HTTP 200).");

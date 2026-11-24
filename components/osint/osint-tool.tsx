@@ -5,7 +5,9 @@ import { Download, Search, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Badge, Card } from "@/components/ui/primitives";
 import { lookupsToCsv, type OsintLookup } from "@/lib/osint/export";
+import { AiNote } from "./ai-note";
 import { OsintResult } from "./osint-result";
+import { OsintTriage } from "./osint-triage";
 
 const EXAMPLES = ["poste-verifica-account.com", "8.8.8.8", "hxxps://example[.]com/login", "acn.gov.it"];
 
@@ -16,14 +18,30 @@ function download(name: string, content: string, type: string) {
   URL.revokeObjectURL(url);
 }
 
+/** Due modalità: indagine singola e triage di una lista (con raggruppamento e IA). */
 export function OsintTool() {
+  const [tab, setTab] = useState<"singola" | "triage">("singola");
+  const [opened, setOpened] = useState<OsintLookup | null>(null);
+  const tabClass = (on: boolean) => `-mb-px border-b-2 px-3 py-2 text-sm ${on ? "border-accent font-medium text-accent" : "border-transparent text-muted hover:text-fg"}`;
+  return (
+    <div className="space-y-4">
+      <div role="tablist" className="flex gap-1 border-b border-line">
+        <button type="button" role="tab" aria-selected={tab === "singola"} className={tabClass(tab === "singola")} onClick={() => setTab("singola")}>Indagine singola</button>
+        <button type="button" role="tab" aria-selected={tab === "triage"} className={tabClass(tab === "triage")} onClick={() => setTab("triage")}>Triage di una lista</button>
+      </div>
+      {tab === "singola" ? <SingleLookup key={opened?.id ?? "nuova"} initial={opened} /> : <OsintTriage onOpen={(l) => { setOpened(l); setTab("singola"); }} />}
+    </div>
+  );
+}
+
+function SingleLookup({ initial }: { initial: OsintLookup | null }) {
   const supabase = useMemo(() => createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!), []);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initial?.query ?? "");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [current, setCurrent] = useState<OsintLookup | null>(null);
+  const [current, setCurrent] = useState<OsintLookup | null>(initial);
   const [history, setHistory] = useState<OsintLookup[]>([]);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(initial?.note ?? "");
 
   const [version, setVersion] = useState(0); // cambia dopo ogni modifica: il registro si ricarica
   const loadHistory = useCallback(() => setVersion((v) => v + 1), []);
@@ -101,6 +119,7 @@ export function OsintTool() {
 
         {current && (
           <>
+            <AiNote lookup={current} onPick={(v) => void run(v)} onUpdate={(ai) => { setCurrent({ ...current, ai }); loadHistory(); }} />
             <OsintResult l={current} onPick={(v) => void run(v)} />
             <Card title="Note e esportazione">
               <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={2000} placeholder="Appunti dell'analista (salvati nel registro)" className="w-full rounded-md border border-line bg-surface px-3 py-2 text-sm" />

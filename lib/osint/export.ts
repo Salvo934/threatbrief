@@ -13,6 +13,9 @@ export type OsintLookup = {
   result: Record<string, unknown>;
   note: string | null;
   created_at: string;
+  /** nota dell'analista scritta con IA sui soli dati raccolti */
+  ai?: { summary: string; next_steps: { pivot: string; why: string }[]; rejected: number; model: string; generated_at: string } | null;
+  batch_id?: string | null;
 };
 
 const cell = (v: unknown) => {
@@ -22,9 +25,12 @@ const cell = (v: unknown) => {
   return /[",\n;]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
 };
 
-/** Una riga per indagine: pronto per Excel, R o Python. */
-export function lookupsToCsv(rows: OsintLookup[]) {
-  const head = ["data_utc", "indicatore", "tipo", "giudizio", "admiralty", "segnali_alti", "segnali_medi", "fonti_ok", "fonti_totali", "segnali", "fonti", "nota"];
+/**
+ * Una riga per indagine: pronto per Excel, R o Python. Con `clusterOf` (triage di una lista)
+ * aggiunge la colonna del gruppo: è il dataset per l'analisi.
+ */
+export function lookupsToCsv(rows: OsintLookup[], clusterOf?: Map<string, string>) {
+  const head = ["data_utc", "indicatore", "tipo", "giudizio", "admiralty", "segnali_alti", "segnali_medi", "fonti_ok", "fonti_totali", "segnali", "fonti", "nota", ...(clusterOf ? ["gruppo"] : [])];
   const lines = rows.map((r) => [
     r.created_at,
     r.query,
@@ -38,6 +44,7 @@ export function lookupsToCsv(rows: OsintLookup[]) {
     r.signals.map((s) => `[${s.level}] ${s.text} (${s.source})`).join(" | "),
     r.sources.map((s) => `${s.name}: ${s.ok ? "ok" : `errore ${s.error ?? s.status ?? ""}`} @ ${s.fetched_at}`).join(" | "),
     r.note ?? "",
+    ...(clusterOf ? [clusterOf.get(r.query) ?? ""] : []),
   ].map(cell).join(","));
   return `${head.join(",")}\n${lines.join("\n")}\n`;
 }
