@@ -11,6 +11,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateDigest } from "../lib/digest/build";
 import { generateDefenseDrafts } from "../lib/defense/autoreport";
+import { processNextInvestigation, setupInvestigator } from "../lib/investigate/run";
 import { generateWorldReport } from "../lib/world/build";
 import { createAdminClient } from "./lib/db";
 import { fetchJson } from "./lib/http";
@@ -144,7 +145,36 @@ async function drafts(db: SupabaseClient) {
   }
 }
 
-const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = { purge, digest, world, drafts };
+/** Crea o aggiorna l'agente investigatore e il suo ambiente (Managed Agents). */
+async function investigatorSetup() {
+  try {
+    const r = await setupInvestigator();
+    console.log(`✔ agente investigatore ${r.agent_id} (versione ${r.version}), ambiente ${r.environment_id}`);
+    return true;
+  } catch (err) {
+    console.error(`✘ configurazione agente: ${err instanceof Error ? err.message : err}`);
+    return false;
+  }
+}
+
+/** Esegue la richiesta di approfondimento più vecchia, se c'è. */
+async function investigate(db: SupabaseClient) {
+  try {
+    const r = await processNextInvestigation(db);
+    if (!r) console.log("✔ approfondimenti: nessuna richiesta in coda");
+    else if (r.ok) console.log(`✔ approfondimento completato: ${r.message}`);
+    else console.error(`✘ approfondimento fallito: ${r.message}`);
+    return !r || r.ok;
+  } catch (err) {
+    console.error(`✘ approfondimento: ${err instanceof Error ? err.message : err}`);
+    return false;
+  }
+}
+
+const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = {
+  purge, digest, world, drafts, investigate,
+  "investigator-setup": () => investigatorSetup(),
+};
 
 async function main() {
   const args = process.argv.slice(2);

@@ -29,6 +29,11 @@ const ROWS: { req: string; where: { label: string; href: string }[]; how: string
     how: "Ogni 6 ore legge gli avvisi ufficiali CISA e partner, rileva quelli sulla filiera della difesa (con la frase che lo giustifica), correla attori, tecniche e CVE sfruttate e prepara da solo una bozza di report che l'analista verifica e pubblica in PDF, STIX e TAXII.",
   },
   {
+    req: "Corroborazione tra fonti e valutazione dell'affidabilità (Admiralty)",
+    where: [{ label: "Difesa e aerospazio", href: "/minacce/difesa" }],
+    how: "L'agente investigatore confronta l'avviso con altre fonti autorizzate e consegna un dossier: ogni affermazione è ricontrollata sulla pagina citata e il codice Admiralty è calcolato (affidabilità dell'editore, credibilità dal numero di fonti indipendenti), non scelto dall'IA.",
+  },
+  {
     req: "Analisi delle TTP e profili degli attori",
     where: [{ label: "Minacce principali", href: "/minacce" }],
     how: "Classifica dei gruppi più attivi contro organizzazioni italiane e schede in italiano costruite solo su fonti primarie (MITRE, avvisi CISA/FBI), con le lacune dichiarate.",

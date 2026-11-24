@@ -12,7 +12,7 @@ import { publicationProblems } from "@/lib/report/validate";
 import { getViewer, sessionDb } from "@/lib/supabase/server";
 import {
   addIocs, addSource, addStatement, addTechniques, deleteIoc, deleteReport, deleteSource, deleteStatement,
-  deleteTechnique, setStatus, updateReport,
+  deleteTechnique, requestInvestigation, setStatus, updateReport,
 } from "../actions";
 
 type Props = PageProps<"/report/[id]">;
@@ -34,10 +34,18 @@ async function Editor({ params }: Pick<Props, "params">) {
   if (!viewer?.isAnalyst) {
     return <EmptyState>Area riservata all&apos;analista. <Link href={`/login?next=/report/${id}`} className="underline">Accedi</Link></EmptyState>;
   }
-  const full = await loadReport(await sessionDb(), { id });
+  const db = await sessionDb();
+  const full = await loadReport(db, { id });
   if (!full) notFound();
   const { report: r } = full;
   const problems = publicationProblems(full);
+  const { data: investigations } = await db
+    .from("investigations")
+    .select("id, status, requested_at, finished_at, session_id, dossier_report_id, list_cost_usd, summary, error")
+    .eq("report_id", r.id)
+    .order("requested_at", { ascending: false })
+    .limit(5);
+  const openInvestigation = (investigations ?? []).some((i) => i.status === "richiesta" || i.status === "in_corso");
   const hidden = <input type="hidden" name="report_id" value={r.id} />;
 
   return (
@@ -71,6 +79,40 @@ async function Editor({ params }: Pick<Props, "params">) {
           Controlla, correggi e poi pubblica: la pubblicazione resta una tua scelta.
         </div>
       )}
+
+      <Card title="Approfondimento con l'agente investigatore">
+        <div className="space-y-3 text-sm">
+          <p className="text-muted">
+            L&apos;agente parte dalla fonte del report, cerca conferme su siti autorizzati (agenzie governative, CERT, vendor
+            affermati) e consegna un dossier come nuova bozza: ogni affermazione con citazione ricontrollata sulla pagina e
+            codice Admiralty calcolato. Tetto di spesa: 2 dollari per indagine.
+          </p>
+          {(investigations ?? []).length > 0 && (
+            <ul className="divide-y divide-line rounded-md border border-line">
+              {(investigations ?? []).map((i) => (
+                <li key={i.id} className="flex flex-wrap items-center gap-2 px-3 py-2 text-xs">
+                  <Badge tone={i.status === "completata" ? "accent" : i.status === "fallita" ? "warn" : "neutral"}>{i.status.replace("_", " ")}</Badge>
+                  <span className="text-muted">{new Date(i.requested_at).toLocaleString("it-IT")}</span>
+                  {i.summary && <span>{i.summary}</span>}
+                  {i.error && <span className="text-err">{i.error}</span>}
+                  {i.list_cost_usd != null && <span className="text-muted">${Number(i.list_cost_usd).toFixed(2)}</span>}
+                  {i.dossier_report_id && <Link href={`/report/${i.dossier_report_id}`} className="text-accent hover:underline">Apri il dossier →</Link>}
+                  {i.session_id && (
+                    <a href={`https://platform.claude.com/workspaces/default/sessions/${i.session_id}`} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+                      Sessione nella Console
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {openInvestigation ? (
+            <p className="text-xs text-muted">Approfondimento in coda o in corso: aggiorna la pagina tra qualche minuto.</p>
+          ) : (
+            <ActionForm action={requestInvestigation} submit="Approfondisci">{hidden}</ActionForm>
+          )}
+        </div>
+      </Card>
 
       <Card title="Stato e pubblicazione">
         {problems.length > 0 ? (

@@ -289,3 +289,20 @@ export async function deleteIoc(_prev: FormState, form: FormData): Promise<FormS
     return {};
   });
 }
+
+/**
+ * «Approfondisci»: crea una richiesta per l'agente investigatore. Nessun segreto qui: lo script su
+ * GitHub Actions (ogni 30 minuti, o avviato a mano) prende in carico la richiesta.
+ */
+export async function requestInvestigation(_prev: FormState, form: FormData): Promise<FormState> {
+  return guarded(async () => {
+    const { db } = await analystDb();
+    const id = reportId(form);
+    const { data: src } = await db.from("report_sources").select("url").eq("report_id", id).not("url", "is", null).limit(1);
+    if (!src?.length) return { error: "Serve almeno una fonte con URL da cui partire." };
+    const { error } = await db.from("investigations").insert({ report_id: id });
+    if (error) return { error: error.code === "23505" ? "C'è già un approfondimento in corso per questo report." : "Richiesta non riuscita." };
+    refresh();
+    return { ok: "Richiesta inviata: l'agente parte entro circa 30 minuti." };
+  });
+}

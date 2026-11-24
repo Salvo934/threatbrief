@@ -1,0 +1,33 @@
+# Agente investigatore: prende in carico le richieste «Approfondisci» fatte dall'analista nell'app.
+# Il Worker non conosce segreti: la richiesta è una riga nel DB, questo workflow la esegue.
+name: Approfondimenti (agente investigatore)
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: investigate
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Una richiesta per esecuzione (tetto di spesa per indagine nella configurazione dell'agente).
+      - run: npm run ingest -- investigate
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
