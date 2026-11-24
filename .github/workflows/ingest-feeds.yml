@@ -4,7 +4,8 @@ name: Ingest feed
 
 on:
   schedule:
-    - cron: "41 */6 * * *"
+    # Avvio principale ogni 6 ore: Worker «threatbrief-cron». Qui solo una riserva giornaliera.
+    - cron: "11 3 * * *"
   workflow_dispatch:
 
 concurrency:

@@ -4,8 +4,16 @@ name: Rapporto della notte
 
 on:
   schedule:
-    - cron: "30 5 * * *" # 05:30 UTC = 06:30 (ora solare) / 07:30 (ora legale) a Roma
+    # Avvio principale: Worker «threatbrief-cron» su Cloudflare. Questi orari sono la riserva
+    # (GitHub può ritardare o saltarli); genera solo il primo che arriva.
+    - cron: "47 5 * * *"
+    - cron: "53 9 * * *"
   workflow_dispatch:
+    inputs:
+      if_missing:
+        description: "Salta se è già stato generato stamattina (usato dal Worker «sveglia»)"
+        type: boolean
+        default: false
 
 concurrency:
   group: world-report
@@ -25,7 +33,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run ingest -- world
+      # A mano: rigenera sempre. Pianificato o dal Worker (if_missing): solo se manca quello di stamattina.
+      - run: npm run ingest -- world ${{ (github.event_name == 'schedule' || inputs.if_missing) && '--if-missing' || '' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}

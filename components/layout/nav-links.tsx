@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BookOpenCheck, Briefcase, Building2, FileText, FolderPen, GraduationCap, Newspaper, ScanSearch, ShieldAlert, Sunrise,
+  BookOpenCheck, Briefcase, Building2, FileText, FolderPen, GraduationCap, Newspaper, Radar, ScanSearch, ShieldAlert, Sunrise,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -11,9 +11,10 @@ import { useAccount } from "./account-badge";
 /** `match`: altri percorsi che appartengono alla stessa voce (es. Minacce comprende Attori e Matrice). */
 type Item = { href: string; label: string; icon: LucideIcon; match?: string[] };
 
-/** Menu pubblico: cinque voci, ognuna la prova di un requisito degli annunci CTI. */
+/** Menu pubblico: sei voci, ognuna la prova di un requisito degli annunci CTI. */
 export const PUBLIC_NAV: Item[] = [
   { href: "/", label: "Briefing", icon: Sunrise, match: ["/briefing"] },
+  { href: "/monitoraggio", label: "Monitoraggio", icon: Radar },
   { href: "/minacce", label: "Minacce", icon: ShieldAlert, match: ["/attori", "/matrice"] },
   { href: "/settori", label: "Settori", icon: Building2, match: ["/mitigazioni"] },
   { href: "/analisi", label: "Analizza", icon: ScanSearch },

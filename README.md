@@ -8,17 +8,18 @@
 
 ---
 
-## Cinque sezioni, ognuna risponde a un requisito degli annunci CTI
+## Sei sezioni, ognuna risponde a un requisito degli annunci CTI
 
 | Sezione | Cosa fa | Requisito |
 |---|---|---|
 | **Briefing** (home) | I punti più importanti del periodo per un'organizzazione italiana: cosa è successo, perché conta, cosa fare. Nasce da una bozza automatica giornaliera (KEV, CSIRT Italia, rivendicazioni, IOC) rivista dall'analista e pubblicata come TLP:CLEAR, massimo 5 punti. | Riassunti giornalieri e settimanali; comunicazione a tutti i livelli |
+| **Monitoraggio** | Mappa radar delle rivendicazioni ransomware nel mondo (paese della vittima, gruppo, settore, ora), filtri per periodo e gruppo, flusso degli eventi con link alle schede. Nessun nome di vittima salvato. | Monitoraggio continuo del panorama delle minacce |
 | **Minacce** | Classifica dei gruppi ransomware più attivi contro organizzazioni italiane e schede in italiano (come entrano, strumenti, tecniche ATT&CK per fase, contromisure specifiche e prioritarie, **contromisure MITRE D3FEND**), solo da fonti primarie. Profili di tutti gli attori ATT&CK e confronto tra due attori. **La notte nel mondo**: rapporto automatico ogni mattina sulle ultime 24 ore (rivendicazioni, malware, nuove KEV), con le tecniche ricorrenti degli attori attivi e le difese ATT&CK/D3FEND che ne coprono di più. **Difesa e aerospazio**: rileva negli avvisi ufficiali CISA e partner quelli sulla filiera della difesa e prepara da solo una bozza di report (fatti con fonte, tecniche, CVE sfruttate, azioni, D3FEND) che l'analista rivede e pubblica. | MITRE ATT&CK e D3FEND; analisi delle TTP |
 | **Settori** | Per ogni settore: attori, tecniche più usate, mitigazioni prioritarie collegate alle misure NIS2 (art. 24 D.Lgs. 138/2024), rivendicazioni. | Tradurre la minaccia in rischio e azioni |
 | **Analizza** | Triage di un testo o di una lista di IOC (anche defanged): nuovo, già visto o collegato a malware e attori; CVE nel catalogo KEV; tecniche citate. | Triage degli IOC; correlazione di più fonti |
 | **Report** | Brief esecutivo di una pagina e scheda tecnica; export PDF e **STIX 2.1**; i report pubblicati sono anche su un **server TAXII 2.1** (`/taxii2/`) consumabile da OpenCTI o MISP. | Report utilizzabili; STIX/TAXII |
 
-Dietro le quinte: raccolta automatica su GitHub Actions (feed ogni 6 ore, ATT&CK e D3FEND ogni settimana, rapporto della notte e digest ogni mattina), pagina [Fonti](https://threatbrief.salvo-bonavita9808.workers.dev/fonti) con lo stato di ogni fonte.
+Dietro le quinte: un Worker Cloudflare separato («threatbrief-cron») avvia agli orari esatti la raccolta su GitHub Actions (feed ogni 6 ore, ATT&CK e D3FEND ogni settimana, rapporto della notte e digest ogni mattina), pagina [Fonti](https://threatbrief.salvo-bonavita9808.workers.dev/fonti) con lo stato di ogni fonte.
 
 **Area personale** (solo per l'analista, dopo l'accesso): digest giornaliero da rivedere, editor dei report, **Accademia** (12 lezioni sul mestiere CTI con domande da colloquio e allenamento a schede) e **Sul campo** (giornata tipo e 8 casi pratici).
 
@@ -117,6 +118,7 @@ Lo schema del database è in [`supabase/migrations/`](supabase/migrations/). Le 
 - **ThreatFox** a volte tronca le risposte lunghe lato server. L'ingestion tiene i record completi ricevuti e registra la raccolta come *parziale*, visibile nella pagina Fonti.
 - **ransomware.live** non ha una categoria per le telecomunicazioni: per quel settore la dashboard mostra "n.d." invece di attribuire dati a caso.
 - **Piano gratuito Cloudflare: 10 ms di CPU per richiesta.** Le pagine pubbliche sono servite da **Workers Cache** (30 minuti, poi aggiornamento in background), quindi una visita in cache non esegue il Worker e non consuma CPU. Il badge dell'account è calcolato nel browser, così le pagine in cache sono identiche per tutti; le pagine dell'analista non vengono mai messe in cache. Un report appena pubblicato compare su /briefs entro circa 30 minuti.
+- **Orari affidabili con un Worker separato.** Le esecuzioni pianificate di GitHub Actions possono essere ritardate o saltate: il Worker `cron/` (Cron Triggers di Cloudflare, piano gratuito) avvia i workflow agli orari esatti. Il suo unico segreto è un token GitHub fine-grained con il solo permesso «Actions: write» su questo repository, **da rinnovare alla scadenza** (`npx wrangler secret put GITHUB_TOKEN --config cron/wrangler.jsonc`). Gli orari di GitHub restano come riserva e non generano doppioni (`--if-missing`).
 - **`npm audit` segnala 3 vulnerabilità moderate** in `glob`/`minimatch`, dipendenze della CLI di build di OpenNext che non finiscono nel Worker. La correzione proposta (downgrade a OpenNext 0.3) romperebbe il progetto.
 
 ---

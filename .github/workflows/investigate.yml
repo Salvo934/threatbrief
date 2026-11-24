@@ -2,9 +2,8 @@
 # Il Worker non conosce segreti: la richiesta è una riga nel DB, questo workflow la esegue.
 name: Approfondimenti (agente investigatore)
 
+# Avviato dal Worker «threatbrief-cron» ogni 30 minuti, solo se ci sono richieste in coda.
 on:
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 concurrency:

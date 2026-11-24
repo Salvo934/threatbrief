@@ -81,3 +81,17 @@ body {
 a {
   text-underline-offset: 2px;
 }
+
+/* Monitoraggio: fascio del radar e impulso sugli eventi recenti (spenti con «riduci movimento»). */
+@keyframes radar-sweep {
+  to { transform: rotate(360deg); }
+}
+@keyframes radar-ping {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+.radar-sweep { animation: radar-sweep 6s linear infinite; }
+.radar-ping { animation: radar-ping 2.2s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep, .radar-ping { animation: none; }
+}

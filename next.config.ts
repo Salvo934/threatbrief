@@ -24,6 +24,7 @@ const PUBLIC_PATHS = [
   "/briefing",
   "/briefing/:date",
   "/competenze",
+  "/monitoraggio",
   "/minacce",
   "/minacce/:slug",
   "/minacce/notte/:date",

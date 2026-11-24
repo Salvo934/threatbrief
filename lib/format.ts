@@ -35,6 +35,7 @@ const SOURCE_NAMES: Record<string, string> = {
   mitre_attack: "MITRE ATT&CK",
   mitre_d3fend: "MITRE D3FEND",
   cisa_advisories: "CISA Advisories",
+  ransomware_live_world: "ransomware.live (mondo)",
   cisa_kev: "CISA KEV",
   threatfox: "ThreatFox",
   urlhaus: "URLhaus",

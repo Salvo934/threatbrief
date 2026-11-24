@@ -24,6 +24,7 @@ import { ingestD3fend } from "./sources/d3fend";
 import { ingestOtx } from "./sources/otx";
 import { RANSOMWARE_IT_URL, ingestRansomwareLive, parseRansomwareLive, type RansomwareLiveVictim } from "./sources/ransomware";
 import { ingestThreatFox } from "./sources/threatfox";
+import { ingestWorldClaims } from "./sources/world-claims";
 import { ingestUrlhaus } from "./sources/urlhaus";
 
 // Chiavi segrete in .env.ingest (mai in .env.local, che finisce nel Worker); URL pubblico da .env.local.
@@ -83,6 +84,7 @@ const JOBS: Record<string, Job> = {
       return { advisories: items.length, first: items[0]?.title };
     },
   },
+  worldclaims: { sourceId: "ransomware_live_world", run: ingestWorldClaims },
   csirt: {
     sourceId: "csirt_italia",
     run: ingestCsirt,
@@ -94,10 +96,11 @@ const JOBS: Record<string, Job> = {
 };
 
 const GROUPS: Record<string, string[]> = {
-  feeds: ["kev", "threatfox", "urlhaus", "otx", "csirt", "cisa", "ransomware", "purge", "drafts"],
+  feeds: ["kev", "threatfox", "urlhaus", "otx", "csirt", "cisa", "ransomware", "worldclaims", "purge", "drafts"],
 };
 
 const RETENTION_DAYS = 90;
+const IF_MISSING = process.argv.includes("--if-missing");
 
 async function purge(db: SupabaseClient) {
   const { data, error } = await db.rpc("purge_stale_iocs", { max_age_days: RETENTION_DAYS });
@@ -109,9 +112,28 @@ async function purge(db: SupabaseClient) {
   return true;
 }
 
+const romeDate = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome" }).format(d);
+const romeHour = (d: Date) => Number(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Rome", hour: "2-digit", hourCycle: "h23" }).format(d));
+
+/**
+ * GitHub può ritardare o saltare le esecuzioni pianificate: i workflow del mattino partono più
+ * volte con --if-missing, e solo la prima che arriva genera davvero (dopo le 3 di notte, ora di Roma).
+ */
+async function doneThisMorning(db: SupabaseClient, table: "world_reports" | "digests", dateCol: "report_date" | "digest_date") {
+  const now = new Date();
+  const { data } = await db.from(table).select("generated_at").eq(dateCol, romeDate(now)).maybeSingle();
+  if (!data?.generated_at) return false;
+  const at = new Date(data.generated_at as string);
+  return romeDate(at) === romeDate(now) && romeHour(at) >= 3;
+}
+
 /** Bozza del digest giornaliero (dati delle ultime ore). La revisione la fa l'analista nell'app. */
 async function digest(db: SupabaseClient) {
   try {
+    if (IF_MISSING && (await doneThisMorning(db, "digests", "digest_date"))) {
+      console.log("✔ digest: già generato stamattina, salto");
+      return true;
+    }
     const d = await generateDigest(db, "automatico");
     console.log(`✔ digest ${d.digest_date}: bozza con ${d.items} elementi`);
     return true;
@@ -124,6 +146,10 @@ async function digest(db: SupabaseClient) {
 /** Rapporto della notte: ultime 24 ore nel mondo, generato automaticamente e pubblico. */
 async function world(db: SupabaseClient) {
   try {
+    if (IF_MISSING && (await doneThisMorning(db, "world_reports", "report_date"))) {
+      console.log("✔ rapporto della notte: già generato stamattina, salto");
+      return true;
+    }
     const r = await generateWorldReport(db);
     console.log(`✔ rapporto della notte ${r.report_date}: ${r.claims} rivendicazioni, ${r.actors} attori collegati ad ATT&CK, ${r.techniques} tecniche${r.ai ? ", lettura scritta con IA" : ""}`);
     return true;

@@ -1,0 +1,28 @@
+// Worker «sveglia»: separato dall'app, nessuna pagina pubblica. Agli orari esatti avvia i
+// workflow di GitHub Actions (le esecuzioni pianificate di GitHub vengono a volte saltate).
+// Unico segreto: GITHUB_TOKEN (fine-grained, solo «Actions: write» su questo repository),
+// impostato con: npx wrangler secret put GITHUB_TOKEN --config cron/wrangler.jsonc
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "threatbrief-cron",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "triggers": {
+    // Piano gratuito: massimo 5 cron per account. Orari UTC.
+    "crons": [
+      "41 */6 * * *", // feed (KEV, IOC, CSIRT, avvisi CISA, rivendicazioni) + bozze difesa
+      "17 5 * * *",   // rapporto della notte
+      "37 6 * * *",   // digest giornaliero
+      "*/30 * * * *"  // approfondimenti richiesti dall'analista (solo se ce ne sono)
+    ]
+  },
+  "vars": {
+    "GITHUB_REPO": "Salvo934/threatbrief",
+    // Valori pubblici (gli stessi del sito): servono solo a sapere se ci sono richieste in coda.
+    "SUPABASE_URL": "https://qbdjtmtmrjaiogxpmfpu.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_NHlflsBrtt5O01Z-EixSAg_3rGJA6kQ"
+  }
+}

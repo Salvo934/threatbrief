@@ -15,6 +15,7 @@ const ABOUT: Record<string, { what: string; schedule: string }> = {
   otx: { what: "Pulse dei canali seguiti, solo TLP:CLEAR", schedule: "ogni 6 ore" },
   csirt_italia: { what: "Alert e bollettini (RSS)", schedule: "ogni 6 ore" },
   mitre_d3fend: { what: "Contromisure difensive per ogni tecnica ATT&CK", schedule: "settimanale" },
+  ransomware_live_world: { what: "Rivendicazioni nel mondo (gruppo, paese, settore, ora; senza nomi delle vittime): base del Monitoraggio", schedule: "ogni 6 ore" },
   cisa_advisories: { what: "Avvisi congiunti CISA/FBI/NSA e agenzie alleate: base della sezione Difesa e aerospazio", schedule: "ogni 6 ore" },
   ransomware_live: { what: "Rivendicazioni ransomware contro vittime italiane (non verificate)", schedule: "ogni 6 ore" },
 };
