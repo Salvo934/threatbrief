@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     ".open-next/**",
     ".wrangler/**",
+    // Edge Functions (Deno): verificate dal runtime di Supabase
+    "supabase/functions/**/index.ts",
   ]),
 ]);
 

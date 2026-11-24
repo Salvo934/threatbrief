@@ -29,6 +29,11 @@ const ROWS: { req: string; where: { label: string; href: string }[]; how: string
     how: "Ogni 6 ore legge gli avvisi ufficiali CISA e partner, rileva quelli sulla filiera della difesa (con la frase che lo giustifica), correla attori, tecniche e CVE sfruttate e prepara da solo una bozza di report che l'analista verifica e pubblica in PDF, STIX e TAXII.",
   },
   {
+    req: "OSINT e pivoting sull'infrastruttura",
+    where: [{ label: "Indagine OSINT (area analista)", href: "/osint" }],
+    how: "Indagine passiva su domini, IP, URL e hash da fonti aperte (RDAP, DNS, Certificate Transparency, Shodan InternetDB) e dal database interno: segnali motivati, giudizio con Admiralty, pivot cliccabili e un registro riproducibile (CSV, JSON, STIX) con ora di consultazione di ogni fonte. Solo infrastruttura, mai persone.",
+  },
+  {
     req: "Valutazione delle fonti e controllo di qualità dei dati",
     where: [{ label: "Qualità dei dati", href: "/qualita" }, { label: "Fonti", href: "/fonti" }],
     how: "Ogni settimana un campione casuale dei dati (CVE, tecniche ATT&CK, rivendicazioni, indicatori, citazioni dei report, avvisi) viene ricontrollato sulle fonti originali; il risultato è pubblico, anomalie comprese, con il link per la verifica manuale.",

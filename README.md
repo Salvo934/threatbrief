@@ -21,7 +21,7 @@
 
 Dietro le quinte: un Worker Cloudflare separato («threatbrief-cron») avvia agli orari esatti la raccolta su GitHub Actions (feed ogni 6 ore, ATT&CK e D3FEND ogni settimana, rapporto della notte e digest ogni mattina), pagina [Fonti](https://threatbrief.salvo-bonavita9808.workers.dev/fonti) con lo stato di ogni fonte.
 
-**Area personale** (solo per l'analista, dopo l'accesso): digest giornaliero da rivedere, editor dei report, **Accademia** (12 lezioni sul mestiere CTI con domande da colloquio e allenamento a schede) e **Sul campo** (giornata tipo e 8 casi pratici).
+**Area personale** (solo per l'analista, dopo l'accesso): digest giornaliero da rivedere, editor dei report, **Indagine OSINT** (indagine passiva su domini, IP, URL e hash: RDAP, DNS, Certificate Transparency, Shodan InternetDB e database ThreatBrief; segnali motivati, giudizio con Admiralty, collegamenti cliccabili, registro di ricerca esportabile in CSV, JSON e STIX con le citazioni delle fonti), **Accademia** (12 lezioni sul mestiere CTI con domande da colloquio e allenamento a schede) e **Sul campo** (giornata tipo e 8 casi pratici).
 
 ## Rigore analitico (la parte che conta)
 
