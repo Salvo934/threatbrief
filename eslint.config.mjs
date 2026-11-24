@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     ".wrangler/**",
     // Edge Functions (Deno): verificate dal runtime di Supabase
     "supabase/functions/**/index.ts",
+    "supabase/functions/**/tools.ts",
   ]),
 ]);
 

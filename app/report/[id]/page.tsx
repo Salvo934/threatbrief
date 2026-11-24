@@ -2,7 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ActionForm, RemoveButton } from "@/components/report/action-form";
+import { DetectionRules } from "@/components/report/detection-rules";
 import { Field, inputClass } from "@/components/report/fields";
+import { SigmaButton } from "@/components/report/sigma-button";
 import { TlpLabel } from "@/components/report/tlp";
 import { Badge, Card, EmptyState, Skeleton } from "@/components/ui/primitives";
 import { loadReport } from "@/lib/data/reports";
@@ -111,6 +113,22 @@ async function Editor({ params }: Pick<Props, "params">) {
           ) : (
             <ActionForm action={requestInvestigation} submit="Approfondisci">{hidden}</ActionForm>
           )}
+        </div>
+      </Card>
+
+      <Card title={`Regole di rilevamento Sigma (${full.rules?.length ?? 0})`}>
+        <div className="space-y-3 text-sm">
+          <p className="text-muted">
+            Dalle tecniche ATT&amp;CK del report (fino a 6, escluse ricognizione e preparazione) l&apos;IA propone una regola Sigma
+            per tecnica; il codice la controlla e scrive lo YAML. Le regole compaiono anche nel report pubblicato, marcate
+            «da testare». Costo indicativo: 10-20 centesimi.
+          </p>
+          {full.techniques.length === 0 ? (
+            <p className="text-xs text-muted">Aggiungi prima le tecniche ATT&amp;CK al report.</p>
+          ) : (
+            <SigmaButton reportId={r.id} hasRules={(full.rules?.length ?? 0) > 0} />
+          )}
+          {(full.rules?.length ?? 0) > 0 && <DetectionRules rules={full.rules!} />}
         </div>
       </Card>
 

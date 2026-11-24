@@ -34,6 +34,16 @@ const ROWS: { req: string; where: { label: string; href: string }[]; how: string
     how: "Indagine passiva su domini, IP, URL e hash da fonti aperte (RDAP, DNS, Certificate Transparency, Shodan InternetDB) e dal database interno: segnali motivati, giudizio con Admiralty, pivot cliccabili e un registro riproducibile (CSV, JSON, STIX) con ora di consultazione di ogni fonte. Triage di liste con raggruppamento in campagne (stesso IP, name server, marchio, registrazione, malware) e note scritte con IA verificate sui dati. Solo infrastruttura, mai persone.",
   },
   {
+    req: "Detection engineering (regole Sigma)",
+    where: [{ label: "Regole del report Cobalt Strike", href: "/briefs/esempio-cobalt-strike-c2?vista=tecnica" }],
+    how: "Dalle tecniche ATT&CK di un report l'IA propone regole Sigma come dati strutturati; il codice le controlla (tecnica del report, sorgente di log nota, condizione che cita solo selezioni esistenti, nessuna chiave ripetuta, nessun IP o hash inventato) e scrive lo YAML. Pubblicate come «experimental», da testare sui propri log.",
+  },
+  {
+    req: "Uso responsabile dell'IA nell'analisi",
+    where: [{ label: "Chiedi a ThreatBrief (area analista)", href: "/assistente" }],
+    how: "Domande in italiano sui dati dell'app: l'assistente usa solo strumenti di lettura e cita le fonti. Un controllo automatico verifica che ogni numero compaia nei dati consultati e che ogni citazione rimandi a una fonte reale; se non torna la risposta viene corretta o segnalata.",
+  },
+  {
     req: "Valutazione delle fonti e controllo di qualità dei dati",
     where: [{ label: "Qualità dei dati", href: "/qualita" }, { label: "Fonti", href: "/fonti" }],
     how: "Ogni settimana un campione casuale dei dati (CVE, tecniche ATT&CK, rivendicazioni, indicatori, citazioni dei report, avvisi) viene ricontrollato sulle fonti originali; il risultato è pubblico, anomalie comprese, con il link per la verifica manuale.",

@@ -60,6 +60,9 @@ export type ReportStatement = {
 export type ReportTechnique = { id: string; external_id: string; name: string; note: string | null };
 export type ReportIoc = { id: number; type: IocType; value: string; first_seen: string; last_seen: string };
 
+/** Regola Sigma generata dalle tecniche del report (bozza con IA, da testare). */
+export type DetectionRule = { id: string; technique_id: string; title: string; level: string; logsource: string; yaml: string; created_at: string };
+
 export type ReportFull = {
   report: ReportRow;
   subject: { label: string; href: string | null; externalId: string | null };
@@ -67,6 +70,7 @@ export type ReportFull = {
   statements: ReportStatement[];
   techniques: ReportTechnique[];
   iocs: ReportIoc[];
+  rules?: DetectionRule[];
 };
 
 /** Limiti del brief esecutivo: deve stare in una pagina A4. */

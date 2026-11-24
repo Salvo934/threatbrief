@@ -6,6 +6,7 @@ import type { RankedMitigation } from "@/lib/attack/mitigations";
 import { CONFIDENCE_LABEL } from "@/lib/report/admiralty";
 import type { ReportFull } from "@/lib/report/types";
 import { formatDate } from "@/lib/format";
+import { DetectionRules } from "./detection-rules";
 import { Sources } from "./sources";
 import { Statements } from "./statements";
 import { TlpLabel } from "./tlp";
@@ -167,6 +168,11 @@ function Technical({ full, mitigations }: { full: ReportFull; mitigations: Ranke
       {full.report.tech_notes && (
         <Card title="Note tecniche (detection, contesto)">
           <p className="whitespace-pre-line text-sm leading-relaxed">{full.report.tech_notes}</p>
+        </Card>
+      )}
+      {(full.rules?.length ?? 0) > 0 && (
+        <Card title={`Regole di rilevamento Sigma (${full.rules!.length})`}>
+          <DetectionRules rules={full.rules!} />
         </Card>
       )}
     </div>

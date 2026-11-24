@@ -1,7 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { sectorName } from "@/lib/format";
-import type { ReportFull, ReportIoc, ReportRow, ReportSource, ReportStatement, ReportTechnique } from "@/lib/report/types";
+import type { DetectionRule, ReportFull, ReportIoc, ReportRow, ReportSource, ReportStatement, ReportTechnique } from "@/lib/report/types";
 
 const REPORT_COLUMNS =
   "id, slug, title, kind, subject_group_id, subject_sector_id, subject_event, tlp, confidence, status, published_at, exec_risk, exec_summary, exec_impact, exec_actions, tech_notes, is_example, auto_generated, ai_assisted, created_at, updated_at";
@@ -45,7 +45,7 @@ export async function loadReport(db: SupabaseClient, by: { slug: string } | { id
   const report = check(res, "report") as ReportRow | null;
   if (!report) return null;
 
-  const [sources, statements, techLinks, iocLinks, group] = await Promise.all([
+  const [sources, statements, techLinks, iocLinks, group, rules] = await Promise.all([
     db.from("report_sources").select("id, title, url, publisher, reliability, credibility, accessed_at").eq("report_id", report.id).order("accessed_at").order("title"),
     db.from("report_statements").select("id, section, kind, body, source_id, confidence, position").eq("report_id", report.id).order("section").order("position"),
     db.from("report_techniques").select("technique_id, note").eq("report_id", report.id),
@@ -53,6 +53,8 @@ export async function loadReport(db: SupabaseClient, by: { slug: string } | { id
     report.subject_group_id
       ? db.from("attack_groups").select("external_id, name").eq("id", report.subject_group_id).maybeSingle()
       : Promise.resolve({ data: null, error: null }),
+    // RLS: pubbliche solo per report pubblicati e TLP:CLEAR
+    db.from("detection_rules").select("id, technique_id, title, level, logsource, yaml, created_at").eq("report_id", report.id).order("technique_id"),
   ]);
   const links = check(techLinks, "tecniche report") as { technique_id: string; note: string | null }[];
   const iocIds = (check(iocLinks, "IOC report") as { ioc_id: number }[]).map((l) => l.ioc_id);
@@ -85,5 +87,6 @@ export async function loadReport(db: SupabaseClient, by: { slug: string } | { id
     statements: check(statements, "fatti e valutazioni") as ReportStatement[],
     techniques,
     iocs: check(iocs, "IOC") as ReportIoc[],
+    rules: (rules.data ?? []) as DetectionRule[],
   };
 }

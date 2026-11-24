@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  BookOpenCheck, Briefcase, Building2, FileText, FolderPen, GraduationCap, Network, Newspaper, Radar, ScanSearch, ShieldAlert, Sunrise,
+  BookOpenCheck, Briefcase, Building2, MessagesSquare, FileText, FolderPen, GraduationCap, Network, Newspaper, Radar, ScanSearch, ShieldAlert, Sunrise,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -25,6 +25,7 @@ export const PUBLIC_NAV: Item[] = [
 export const PERSONAL_NAV: Item[] = [
   { href: "/digest", label: "Digest giornaliero", icon: Newspaper },
   { href: "/report", label: "I miei report", icon: FolderPen },
+  { href: "/assistente", label: "Chiedi a ThreatBrief", icon: MessagesSquare },
   { href: "/osint", label: "Indagine OSINT", icon: Network },
   { href: "/accademia", label: "Accademia", icon: GraduationCap },
   { href: "/accademia/sul-campo", label: "Sul campo", icon: Briefcase },
