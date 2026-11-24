@@ -58,6 +58,7 @@ async function Content() {
                   <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted">
                     <TlpLabel tlp={r.tlp} />
                     <Badge tone={r.status === "published" ? "accent" : "neutral"}>{STATUS[r.status]}</Badge>
+                    {r.auto_generated && <Badge tone="warn">bozza automatica</Badge>}
                     modificato {formatDateTime(r.updated_at)}
                   </div>
                 </div>

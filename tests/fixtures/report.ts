@@ -20,6 +20,7 @@ export const fixtureReport: ReportFull = {
     exec_actions: ["Abilitare MFA"],
     tech_notes: null,
     is_example: true,
+    auto_generated: false,
     created_at: "2026-11-22T09:00:00Z",
     updated_at: "2026-11-22T10:00:00Z",
   },

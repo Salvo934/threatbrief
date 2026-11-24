@@ -4,13 +4,13 @@ import { sectorName } from "@/lib/format";
 import type { ReportFull, ReportIoc, ReportRow, ReportSource, ReportStatement, ReportTechnique } from "@/lib/report/types";
 
 const REPORT_COLUMNS =
-  "id, slug, title, kind, subject_group_id, subject_sector_id, subject_event, tlp, confidence, status, published_at, exec_risk, exec_summary, exec_impact, exec_actions, tech_notes, is_example, created_at, updated_at";
+  "id, slug, title, kind, subject_group_id, subject_sector_id, subject_event, tlp, confidence, status, published_at, exec_risk, exec_summary, exec_impact, exec_actions, tech_notes, is_example, auto_generated, created_at, updated_at";
 
 export type ReportListItem = Pick<
   ReportRow,
-  "id" | "slug" | "title" | "kind" | "tlp" | "status" | "published_at" | "exec_risk" | "exec_summary" | "is_example" | "updated_at" | "confidence"
+  "id" | "slug" | "title" | "kind" | "tlp" | "status" | "published_at" | "exec_risk" | "exec_summary" | "is_example" | "auto_generated" | "updated_at" | "confidence"
 >;
-const LIST_COLUMNS = "id, slug, title, kind, tlp, status, published_at, exec_risk, exec_summary, is_example, updated_at, confidence";
+const LIST_COLUMNS = "id, slug, title, kind, tlp, status, published_at, exec_risk, exec_summary, is_example, auto_generated, updated_at, confidence";
 
 function check<T>(res: { data: T | null; error: { message: string } | null }, what: string): T {
   if (res.error) throw new Error(`${what}: ${res.error.message}`);

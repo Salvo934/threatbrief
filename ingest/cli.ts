@@ -10,11 +10,13 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateDigest } from "../lib/digest/build";
+import { generateDefenseDrafts } from "../lib/defense/autoreport";
 import { generateWorldReport } from "../lib/world/build";
 import { createAdminClient } from "./lib/db";
 import { fetchJson } from "./lib/http";
 import { runSource, type SourceResult } from "./lib/run";
 import { ATTACK_URL, ingestAttack, parseAttackBundle, type StixBundle } from "./sources/attack";
+import { CISA_ADVISORIES_URL, ingestCisaAdvisories, parseCisaRss } from "./sources/cisa";
 import { CSIRT_RSS_URL, ingestCsirt, parseCsirtRss } from "./sources/csirt";
 import { KEV_URL, ingestKev, parseKev, type KevCatalog } from "./sources/kev";
 import { ingestD3fend } from "./sources/d3fend";
@@ -72,6 +74,14 @@ const JOBS: Record<string, Job> = {
       return { victims: rows.length, withSector: rows.filter((r) => r.sector_id).length };
     },
   },
+  cisa: {
+    sourceId: "cisa_advisories",
+    run: ingestCisaAdvisories,
+    dryRun: async () => {
+      const items = parseCisaRss(await (await fetch(CISA_ADVISORIES_URL, { headers: { "user-agent": "Mozilla/5.0 (compatible; ThreatBrief-ingest/0.1)" } })).text());
+      return { advisories: items.length, first: items[0]?.title };
+    },
+  },
   csirt: {
     sourceId: "csirt_italia",
     run: ingestCsirt,
@@ -83,7 +93,7 @@ const JOBS: Record<string, Job> = {
 };
 
 const GROUPS: Record<string, string[]> = {
-  feeds: ["kev", "threatfox", "urlhaus", "otx", "csirt", "ransomware", "purge"],
+  feeds: ["kev", "threatfox", "urlhaus", "otx", "csirt", "cisa", "ransomware", "purge", "drafts"],
 };
 
 const RETENTION_DAYS = 90;
@@ -122,7 +132,19 @@ async function world(db: SupabaseClient) {
   }
 }
 
-const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = { purge, digest, world };
+/** Bozze di report per i nuovi avvisi su difesa e aerospazio (dopo la raccolta CISA). */
+async function drafts(db: SupabaseClient) {
+  try {
+    const n = await generateDefenseDrafts(db);
+    console.log(`✔ bozze automatiche: ${n} nuovi report da rivedere`);
+    return true;
+  } catch (err) {
+    console.error(`✘ bozze automatiche: ${err instanceof Error ? err.message : err}`);
+    return false;
+  }
+}
+
+const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = { purge, digest, world, drafts };
 
 async function main() {
   const args = process.argv.slice(2);

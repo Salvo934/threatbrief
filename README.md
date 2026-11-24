@@ -13,7 +13,7 @@
 | Sezione | Cosa fa | Requisito |
 |---|---|---|
 | **Briefing** (home) | I punti più importanti del periodo per un'organizzazione italiana: cosa è successo, perché conta, cosa fare. Nasce da una bozza automatica giornaliera (KEV, CSIRT Italia, rivendicazioni, IOC) rivista dall'analista e pubblicata come TLP:CLEAR, massimo 5 punti. | Riassunti giornalieri e settimanali; comunicazione a tutti i livelli |
-| **Minacce** | Classifica dei gruppi ransomware più attivi contro organizzazioni italiane e schede in italiano (come entrano, strumenti, tecniche ATT&CK per fase, contromisure specifiche e prioritarie, **contromisure MITRE D3FEND**), solo da fonti primarie. Profili di tutti gli attori ATT&CK e confronto tra due attori. **La notte nel mondo**: rapporto automatico ogni mattina sulle ultime 24 ore (rivendicazioni, malware, nuove KEV), con le tecniche ricorrenti degli attori attivi e le difese ATT&CK/D3FEND che ne coprono di più. | MITRE ATT&CK e D3FEND; analisi delle TTP |
+| **Minacce** | Classifica dei gruppi ransomware più attivi contro organizzazioni italiane e schede in italiano (come entrano, strumenti, tecniche ATT&CK per fase, contromisure specifiche e prioritarie, **contromisure MITRE D3FEND**), solo da fonti primarie. Profili di tutti gli attori ATT&CK e confronto tra due attori. **La notte nel mondo**: rapporto automatico ogni mattina sulle ultime 24 ore (rivendicazioni, malware, nuove KEV), con le tecniche ricorrenti degli attori attivi e le difese ATT&CK/D3FEND che ne coprono di più. **Difesa e aerospazio**: rileva negli avvisi ufficiali CISA e partner quelli sulla filiera della difesa e prepara da solo una bozza di report (fatti con fonte, tecniche, CVE sfruttate, azioni, D3FEND) che l'analista rivede e pubblica. | MITRE ATT&CK e D3FEND; analisi delle TTP |
 | **Settori** | Per ogni settore: attori, tecniche più usate, mitigazioni prioritarie collegate alle misure NIS2 (art. 24 D.Lgs. 138/2024), rivendicazioni. | Tradurre la minaccia in rischio e azioni |
 | **Analizza** | Triage di un testo o di una lista di IOC (anche defanged): nuovo, già visto o collegato a malware e attori; CVE nel catalogo KEV; tecniche citate. | Triage degli IOC; correlazione di più fonti |
 | **Report** | Brief esecutivo di una pagina e scheda tecnica; export PDF e **STIX 2.1**; i report pubblicati sono anche su un **server TAXII 2.1** (`/taxii2/`) consumabile da OpenCTI o MISP. | Report utilizzabili; STIX/TAXII |
@@ -74,6 +74,7 @@ flowchart LR
 | MITRE ATT&CK Enterprise (STIX 2.1) | tattiche, tecniche, gruppi, software, mitigazioni | settimanale | no |
 | MITRE D3FEND (API) | contromisure difensive per ogni tecnica ATT&CK | settimanale | no |
 | CISA KEV | vulnerabilità sfruttate attivamente | 6 h | no |
+| CISA Cybersecurity Advisories (RSS) | avvisi congiunti CISA/FBI/NSA e agenzie alleate, testo completo | 6 h | no |
 | abuse.ch ThreatFox, URLhaus | IOC (IP, domini, URL, hash) | 6 h | sì, gratuita |
 | AlienVault OTX | pulse, solo TLP:CLEAR/WHITE | 6 h | sì, gratuita (facoltativa) |
 | CSIRT Italia / ACN | alert e bollettini (RSS) | 6 h | no |

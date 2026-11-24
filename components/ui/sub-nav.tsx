@@ -20,6 +20,7 @@ export function SubNav({ items, current }: { items: { href: string; label: strin
 
 export const MINACCE_TABS = [
   { href: "/minacce", label: "Minacce principali" },
+  { href: "/minacce/difesa", label: "Difesa e aerospazio" },
   { href: "/minacce/notte", label: "La notte nel mondo" },
   { href: "/attori", label: "Tutti gli attori" },
   { href: "/matrice", label: "Confronta due attori" },

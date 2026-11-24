@@ -24,6 +24,11 @@ const ROWS: { req: string; where: { label: string; href: string }[]; how: string
     how: "Per ogni attore, le contromisure difensive D3FEND (rafforzare, rilevare, isolare…) ordinate per quante tecniche coprono, dall'API ufficiale MITRE.",
   },
   {
+    req: "Minacce alla difesa e all'aerospazio; automazione del ciclo di intelligence",
+    where: [{ label: "Difesa e aerospazio", href: "/minacce/difesa" }, { label: "La notte nel mondo", href: "/minacce/notte" }],
+    how: "Ogni 6 ore legge gli avvisi ufficiali CISA e partner, rileva quelli sulla filiera della difesa (con la frase che lo giustifica), correla attori, tecniche e CVE sfruttate e prepara da solo una bozza di report che l'analista verifica e pubblica in PDF, STIX e TAXII.",
+  },
+  {
     req: "Analisi delle TTP e profili degli attori",
     where: [{ label: "Minacce principali", href: "/minacce" }],
     how: "Classifica dei gruppi più attivi contro organizzazioni italiane e schede in italiano costruite solo su fonti primarie (MITRE, avvisi CISA/FBI), con le lacune dichiarate.",

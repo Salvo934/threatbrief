@@ -29,6 +29,8 @@ export type ReportRow = {
   exec_actions: string[];
   tech_notes: string | null;
   is_example: boolean;
+  /** creato dalla pipeline «Difesa e aerospazio»: bozza da verificare */
+  auto_generated: boolean;
   created_at: string;
   updated_at: string;
 };

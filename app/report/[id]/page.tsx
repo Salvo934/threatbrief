@@ -57,6 +57,14 @@ async function Editor({ params }: Pick<Props, "params">) {
         </div>
       </div>
 
+      {r.auto_generated && (
+        <div className="rounded-lg border border-warn-bg bg-warn-bg/40 px-4 py-3 text-sm">
+          <strong>Bozza creata automaticamente</strong> da un avviso ufficiale su difesa e aerospazio. Fatti, tecniche e
+          fonte vengono dall&apos;avviso; rischio, impatto e azioni sono <strong>suggerimenti da verificare</strong>. Controlla,
+          correggi e poi pubblica: la pubblicazione resta una tua scelta.
+        </div>
+      )}
+
       <Card title="Stato e pubblicazione">
         {problems.length > 0 ? (
           <ul className="mb-3 list-disc space-y-0.5 pl-5 text-sm text-muted">
