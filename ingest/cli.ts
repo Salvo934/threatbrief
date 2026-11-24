@@ -12,6 +12,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { generateDigest } from "../lib/digest/build";
 import { generateDefenseDrafts } from "../lib/defense/autoreport";
 import { processNextInvestigation, setupInvestigator } from "../lib/investigate/run";
+import { runQualityCheck } from "./quality";
 import { generateWorldReport } from "../lib/world/build";
 import { createAdminClient } from "./lib/db";
 import { fetchJson } from "./lib/http";
@@ -197,8 +198,21 @@ async function investigate(db: SupabaseClient) {
   }
 }
 
+/** Controllo qualità: un campione di dati ricontrollato sulle fonti originali. */
+async function quality(db: SupabaseClient) {
+  try {
+    const r = await runQualityCheck(db);
+    console.log(`✔ controllo qualità: ${r.ok}/${r.total} verifiche superate`);
+    for (const [area, s] of Object.entries(r.summary)) console.log(`  ${area}: ${s!.ok}/${s!.checked}`);
+    return true;
+  } catch (err) {
+    console.error(`✘ controllo qualità: ${err instanceof Error ? err.message : err}`);
+    return false;
+  }
+}
+
 const SPECIAL: Record<string, (db: SupabaseClient) => Promise<boolean>> = {
-  purge, digest, world, drafts, investigate,
+  purge, digest, world, drafts, investigate, quality,
   "investigator-setup": () => investigatorSetup(),
 };
 

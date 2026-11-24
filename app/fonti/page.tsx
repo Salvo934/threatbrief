@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { Badge, Card, PageHeader, Skeleton } from "@/components/ui/primitives";
 import { formatDateTime, formatNumber, sourceName } from "@/lib/format";
@@ -36,7 +37,8 @@ export default function FontiPage() {
       <PageHeader title="Fonti e raccolta">
         Stato di ogni feed: quando è stato letto, quanti record ha restituito e l&apos;ultimo errore. Se una fonte non
         risponde le altre continuano a essere aggiornate. La raccolta gira su GitHub Actions; gli IOC non visti da 90
-        giorni vengono rimossi.
+        giorni vengono rimossi. Ogni settimana un campione dei dati viene ricontrollato sulle fonti originali: vedi{" "}
+        <Link href="/qualita" className="underline">Qualità dei dati</Link>.
       </PageHeader>
       <Suspense fallback={<Skeleton className="h-96" />}>
         <Sources />

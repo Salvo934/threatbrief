@@ -29,6 +29,11 @@ const ROWS: { req: string; where: { label: string; href: string }[]; how: string
     how: "Ogni 6 ore legge gli avvisi ufficiali CISA e partner, rileva quelli sulla filiera della difesa (con la frase che lo giustifica), correla attori, tecniche e CVE sfruttate e prepara da solo una bozza di report che l'analista verifica e pubblica in PDF, STIX e TAXII.",
   },
   {
+    req: "Valutazione delle fonti e controllo di qualità dei dati",
+    where: [{ label: "Qualità dei dati", href: "/qualita" }, { label: "Fonti", href: "/fonti" }],
+    how: "Ogni settimana un campione casuale dei dati (CVE, tecniche ATT&CK, rivendicazioni, indicatori, citazioni dei report, avvisi) viene ricontrollato sulle fonti originali; il risultato è pubblico, anomalie comprese, con il link per la verifica manuale.",
+  },
+  {
     req: "Corroborazione tra fonti e valutazione dell'affidabilità (Admiralty)",
     where: [{ label: "Difesa e aerospazio", href: "/minacce/difesa" }],
     how: "L'agente investigatore confronta l'avviso con altre fonti autorizzate e consegna un dossier: ogni affermazione è ricontrollata sulla pagina citata e il codice Admiralty è calcolato (affidabilità dell'editore, credibilità dal numero di fonti indipendenti), non scelto dall'IA.",

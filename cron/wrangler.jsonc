@@ -16,7 +16,8 @@
       "41 */6 * * *", // feed (KEV, IOC, CSIRT, avvisi CISA, rivendicazioni) + bozze difesa
       "17 5 * * *",   // rapporto della notte
       "37 6 * * *",   // digest giornaliero
-      "*/30 * * * *"  // approfondimenti richiesti dall'analista (solo se ce ne sono)
+      "*/30 * * * *", // approfondimenti richiesti dall'analista (solo se ce ne sono)
+      "23 4 * * 1"    // lunedì: controllo qualità dei dati
     ]
   },
   "vars": {

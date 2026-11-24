@@ -19,6 +19,7 @@ export const SCHEDULE: Record<string, Job[]> = {
   "17 5 * * *": [{ workflow: "world-report.yml", inputs: { if_missing: "true" } }],
   "37 6 * * *": [{ workflow: "digest.yml", inputs: { if_missing: "true" } }],
   "*/30 * * * *": [{ workflow: "investigate.yml", onlyIfPending: true }],
+  "23 4 * * 1": [{ workflow: "quality.yml" }],
 };
 
 async function pendingInvestigations(env: Env) {

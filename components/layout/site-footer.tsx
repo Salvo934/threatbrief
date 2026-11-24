@@ -4,6 +4,7 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-[1400px] space-y-1 px-4 py-4 sm:px-6">
         <p className="flex flex-wrap gap-x-4 gap-y-1">
           <a className="underline" href="/fonti">Fonti e stato della raccolta</a>
+          <a className="underline" href="/qualita">Qualità dei dati</a>
           <a className="underline" href="/taxii2/">Server TAXII 2.1</a>
           <a className="underline" href="/briefs/rss.xml">Feed RSS</a>
           <a className="underline" href="/competenze">Cosa dimostra</a>

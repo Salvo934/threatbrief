@@ -17,6 +17,7 @@ const PUBLIC_PATHS = [
   "/mitigazioni",
   "/mitigazioni/:id",
   "/fonti",
+  "/qualita",
   "/briefs",
   "/briefs/rss.xml",
   "/briefs/:slug",
